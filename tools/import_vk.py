@@ -454,6 +454,15 @@ def photo_from_item(item) -> dict | None:
     }
 
 
+def caption_parts(value: str) -> tuple[str, str]:
+    if not value:
+        return "", ""
+    fragment = BeautifulSoup(value, "html.parser")
+    html_str = sanitize_inner(fragment)
+    text = normalize_space(fragment.get_text(" ", strip=True))
+    return html_str, text
+
+
 def parse_figure(fig) -> dict | None:
     caption_el = fig.find("figcaption")
     caption_html = sanitize_inner(caption_el) if caption_el else ""
@@ -462,6 +471,17 @@ def parse_figure(fig) -> dict | None:
         if caption_el
         else ""
     )
+    captions: list[str] = []
+    if caption_el is not None and caption_el.get("data-captions"):
+        try:
+            parsed = json.loads(caption_el.get("data-captions"))
+            if isinstance(parsed, list):
+                captions = [
+                    value if isinstance(value, str) else ""
+                    for value in parsed
+                ]
+        except Exception:  # noqa: BLE001
+            captions = []
 
     video = fig.find("video")
     if video is not None:
@@ -502,6 +522,16 @@ def parse_figure(fig) -> dict | None:
             photos = []
 
     if photos:
+        if captions:
+            for index, photo in enumerate(photos):
+                value = captions[index] if index < len(captions) else ""
+                photo["caption"], photo["caption_text"] = caption_parts(value)
+        else:
+            photos[0]["caption"] = caption_html
+            photos[0]["caption_text"] = caption_text
+            for photo in photos[1:]:
+                photo["caption"] = ""
+                photo["caption_text"] = ""
         return {
             "type": "photos",
             "photos": photos,
@@ -1048,7 +1078,10 @@ def collect_translation_sources(articles: list[dict]) -> set[str]:
             elif block["type"] == "list":
                 for item in block["items"]:
                     add(item)
-            elif block["type"] in ("photos", "gif", "video"):
+            elif block["type"] == "photos":
+                for photo in block.get("photos", []):
+                    add(photo.get("caption", ""))
+            elif block["type"] in ("gif", "video"):
                 add(block.get("caption", ""))
     return sources
 
@@ -1142,12 +1175,18 @@ def url_path(relative: str | None) -> str | None:
 
 
 def render_caption(
-    html_str: str, plain_text: str, cache: dict, lang: str
+    html_str: str,
+    plain_text: str,
+    cache: dict,
+    lang: str,
+    *,
+    class_name: str = "",
 ) -> str:
     if not html_str:
         return ""
     rendered = tr_html(html_str, cache, lang)
-    return f"<figcaption>{rendered}</figcaption>"
+    class_attr = f' class="{class_name}"' if class_name else ""
+    return f"<figcaption{class_attr}>{rendered}</figcaption>"
 
 
 def media_caption_plain(
@@ -1166,15 +1205,30 @@ def media_caption_plain(
     return value
 
 
+def photo_caption(
+    photo: dict, cache: dict, lang: str
+) -> tuple[str, str]:
+    caption_html = photo.get("caption", "")
+    caption_text = photo.get("caption_text", "")
+    if caption_html:
+        rendered = tr_html(caption_html, cache, lang)
+        plain = normalize_space(strip_tags(rendered))
+    elif caption_text:
+        plain = tr_plain(caption_text, cache, lang)
+        rendered = esc(plain)
+    else:
+        return "", ""
+    if lang == "en" and has_cyrillic(plain):
+        return "", ""
+    return rendered, plain
+
+
 def render_photos(
     block: dict, article: dict, cache: dict, lang: str
 ) -> str:
-    caption_html = block.get("caption", "")
-    caption_text = block.get("caption_text", "") or article["title_ru"]
-    caption_plain = media_caption_plain(block, article, cache, lang)
-    caption = render_caption(caption_html, caption_text, cache, lang)
-
+    fallback_alt = article["title_en"] if lang == "en" else article["title_ru"]
     slides = []
+    slide_captions: list[tuple[str, str]] = []
     for photo in block["photos"]:
         path = url_path(photo.get("path"))
         if not path:
@@ -1184,15 +1238,18 @@ def render_photos(
         size_attrs = ""
         if width and height:
             size_attrs = f' width="{width}" height="{height}"'
-        alt = esc(truncate(caption_plain, 120))
+        caption_html, caption_plain = photo_caption(photo, cache, lang)
+        alt = esc(truncate(caption_plain or fallback_alt, 120))
         slides.append(
             '<button type="button" class="photo-button carousel__slide"'
             f' data-full="{esc(path)}" data-caption="{esc(caption_plain)}"'
+            f' data-caption-html="{esc(caption_html)}"'
             f' aria-label="{alt}">'
             f'<img src="{esc(path)}"{size_attrs} alt="{alt}"'
             ' loading="lazy" decoding="async">'
             "</button>"
         )
+        slide_captions.append((caption_html, caption_plain))
 
     if not slides:
         unavailable = "Photo unavailable." if lang == "en" else "Фото недоступно."
@@ -1204,6 +1261,12 @@ def render_photos(
         )
 
     if len(slides) == 1:
+        caption_html, caption_plain = slide_captions[0]
+        caption = (
+            f"<figcaption>{caption_html}</figcaption>"
+            if caption_plain
+            else ""
+        )
         return f'<figure class="article-figure">{slides[0]}{caption}</figure>'
 
     first = block["photos"][0]
@@ -1212,6 +1275,12 @@ def render_photos(
         aspect = (
             f' style="--aspect: {int(first["width"])} / {int(first["height"])}"'
         )
+    first_html, first_plain = slide_captions[0]
+    hidden = "" if first_plain else " hidden"
+    caption = (
+        f'<figcaption class="carousel__caption"{hidden}>'
+        f"{first_html}</figcaption>"
+    )
     prev_label = "Previous photo" if lang == "en" else "Предыдущее фото"
     next_label = "Next photo" if lang == "en" else "Следующее фото"
     return (

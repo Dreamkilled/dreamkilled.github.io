@@ -179,6 +179,9 @@
     const next = carousel.querySelector(".carousel__arrow--next");
     const counter = carousel.querySelector(".carousel__counter");
     const viewport = carousel.querySelector(".carousel__viewport");
+    const caption = carousel
+      .closest("figure")
+      ?.querySelector(".carousel__caption");
 
     if (!track || slides.length < 2) return;
 
@@ -188,6 +191,17 @@
       track.style.transform = `translateX(-${index * 100}%)`;
       if (counter) {
         counter.textContent = `${index + 1}/${slides.length}`;
+      }
+      if (caption) {
+        const captionHtml = (slides[index].dataset.captionHtml || "").trim();
+        const captionText = (slides[index].dataset.caption || "").trim();
+        if (captionHtml) {
+          caption.innerHTML = captionHtml;
+          caption.hidden = false;
+        } else {
+          caption.textContent = captionText;
+          caption.hidden = !captionText;
+        }
       }
       slides.forEach((slide, slideIndex) => {
         const active = slideIndex === index;

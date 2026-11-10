@@ -4034,5 +4034,621 @@
   "4986287191e776235a85f06345cfd1a4595de06b": {
     "src": "Этот <a href=\"/ru/ot-pervogo/#myhouse-wad\">Дом</a>… С ним что-то не так.",
     "en": "This <a href=\"/ru/ot-pervogo/#myhouse-wad\">House</a>… There’s something wrong with it."
+  },
+  "6597a8fccbb80158b5d400519049640ced114859": {
+    "src": "10 уровней не так уж много, но до конца я так и не добрался.",
+    "en": "10 levels is not that much, but I never got to the end."
+  },
+  "384775e43e586427490a8c7cdc4eceaf8c1a9858": {
+    "src": "400 км/ч.",
+    "en": "400 km/h."
+  },
+  "3686bad24fde3e422e7c6fb33fe4a2a600870d56": {
+    "src": "Commando — случайные карты с ботами.",
+    "en": "Commando - random maps with bots."
+  },
+  "26496f24b380e4cd3ac9b32a6d0c3a67d3ebcd90": {
+    "src": "Dune 2000. Черви съедают добытчиков, а здания без фундамента хлипкие.",
+    "en": "Dune 2000. Worms eat miners, and buildings without foundations are flimsy."
+  },
+  "77c242b4adad0a5051c3b7cf6e1cda534c34d6f9": {
+    "src": "Eggnogg+ для коопа за одним компом.",
+    "en": "Eggnogg+ for co-op on one computer."
+  },
+  "fe9717a0fd9bcfe45c406af0c70ea23b06fc8c47": {
+    "src": "IXE перешла к виду сбоку.",
+    "en": "IXE moved to the side view."
+  },
+  "31fe50e2cc83769cbd79dfa15f90bdee64d64e88": {
+    "src": "Lugaru — первая часть.",
+    "en": "Lugaru - the first part."
+  },
+  "504933bb401d5c58acbbcec68fab9c63873afd97": {
+    "src": "Автор пишет о разработке второй части в <a href=\"http://www.hempuli.com\" rel=\"noopener noreferrer nofollow\" target=\"_blank\">www.hempuli.com</a>",
+    "en": "The author writes about the development of the second part in <a href=\"http://www.hempuli.com\" rel=\"noopener noreferrer nofollow\" target=\"_blank\">www.hempuli.com</a>"
+  },
+  "caecafd19ba95fa3800464cc7421c76f91c3a1c4": {
+    "src": "Алиса в домике для пионеров.",
+    "en": "Alice in the house for pioneers."
+  },
+  "e9bddbc6a314fcc93158cc4120daca0bc8482595": {
+    "src": "Без плотины и бобр не бобр.",
+    "en": "Without a dam, a beaver is not a beaver."
+  },
+  "ab3601dec15cb6de93af585cc86cf82e66d5a3ab": {
+    "src": "Бетонный брутализм напомнил сны.",
+    "en": "Concrete brutalism reminded me of dreams."
+  },
+  "4eee6635eb25e07a089674bcb40bd1c589a5822d": {
+    "src": "Боброград со всеми удобствами.",
+    "en": "Bobrograd with all amenities."
+  },
+  "34f695c5a51a2653f46f83f52e5afef928fe8e61": {
+    "src": "Бои настолько простые, что фанаты подняли сложность модом.",
+    "en": "The combat is so easy that fans have increased the difficulty with a mod."
+  },
+  "e514d0adc99f30e011de7d75f8a168992a50c292": {
+    "src": "Болванчики покрываются синяками, теряют кожу и разлетаются на куски.",
+    "en": "The bobbleheads become bruised, lose their skin, and break into pieces."
+  },
+  "15fa98153e05bed9a933d3992e1e6da324daa48e": {
+    "src": "Босяра.",
+    "en": "Bosyara."
+  },
+  "c61ebe51d62445d5eb58983d0f57195da5db34d2": {
+    "src": "В <strong>Biotech </strong>колонисты обрели технологии агрессивных механоидов.",
+    "en": "In<strong>Biotech</strong>the colonists acquired the technology of aggressive mechanoids."
+  },
+  "807e8153209c5a7c6feccdfeb6492503560a23ba": {
+    "src": "В <strong>Infinite Craft</strong> можно открыть странные штуки вроде Свинохоббита.",
+    "en": "In <strong>Infinite Craft</strong> you can unlock strange things like the Hobbit Pig."
+  },
+  "93c27e85625081ac0afe3f9e3545336f15f86788": {
+    "src": "В <strong>Royalty </strong>знатные колонисты получили технологии равные магии.",
+    "en": "In<strong>Royalty</strong>noble colonists received technology equal to magic."
+  },
+  "38492d31ce47a2e45559fcb6cab395f7b3ec927b": {
+    "src": "В IXE был эпизод, где капитан сражается сам.",
+    "en": "There was an episode in IXE where the captain fights by himself."
+  },
+  "fe14ce629406361b1dc1bc0d5462039aa692c8c7": {
+    "src": "В Йоре полно мест для скалолазов.",
+    "en": "Yora is full of places for rock climbers."
+  },
+  "f3c898cbc6c84876d0bec15d2f0a2fa4f602287d": {
+    "src": "В игре есть руководство, как в старых играх.",
+    "en": "The game has a guide, just like the old games."
+  },
+  "57aea0870c23ca7fbb5b9f4a78899d6d0a755c79": {
+    "src": "В игре много оружия и костюмов.",
+    "en": "There are many weapons and costumes in the game."
+  },
+  "1801665cd338f8b011311630e43a9dde96cf0b48": {
+    "src": "В игре несколько концовок.",
+    "en": "The game has several endings."
+  },
+  "4b23a195df7517af0a4262aeafe93bffcd1dc608": {
+    "src": "В какую дверь пойти?",
+    "en": "Which door should I go through?"
+  },
+  "42ab90ac6391a46a493c362e2befab2a5ae9c075": {
+    "src": "В коопе веселее.",
+    "en": "It's more fun in a co-op."
+  },
+  "a8ed1b240c83be56dfc4284f256fb1d64710e8f5": {
+    "src": "В мире достаточно жутковатостей.",
+    "en": "There's enough creepiness in the world."
+  },
+  "77620e41b127bbc0fcfd72b50d71dc5a341e7026": {
+    "src": "В мире роботов самое место хакерству.",
+    "en": "In the world of robots, hacking has a place."
+  },
+  "34478b44bc4a06dd8e9287f9e2dc9d3735fea52a": {
+    "src": "В финале высота настолько ужасающая, что горизонт округляется.",
+    "en": "At the end, the height is so terrifying that the horizon becomes rounded."
+  },
+  "52b3c07587e58969cf2db585569cb94fb8ccf417": {
+    "src": "В целом это новелла-ужастик с множеством выборов и концовок.",
+    "en": "Overall, this is a horror novella with many choices and endings."
+  },
+  "44f9c92568928335bba5670222972f9e8733f202": {
+    "src": "Вавилонская башня вдалеке выше любого небоскрёба.",
+    "en": "The Tower of Babel in the distance is taller than any skyscraper."
+  },
+  "7016741c3ad1d9eb3bd549ff1c28c3b1f9014db7": {
+    "src": "Во второй части герой стал подвижней.",
+    "en": "In the second part the hero became more mobile."
+  },
+  "1a7f56910fa5cd5f9e1e106a16fd5d187ba357a9": {
+    "src": "Во второй части персонажей больше.",
+    "en": "There are more characters in the second part."
+  },
+  "dc0a9e4ffd8b569527b0b7bb0957e04582e53442": {
+    "src": "Ворота будто из забытого сна.",
+    "en": "The gate seems to be from a forgotten dream."
+  },
+  "5171c54665bea8fac6667add7f88eaa17b649b60": {
+    "src": "Все в клубе сочиняют стихи. Тебе тоже придётся.",
+    "en": "Everyone in the club writes poetry. You will have to too."
+  },
+  "f405ca925f7fa954d80b5c67b227b22b8a9133ea": {
+    "src": "Все диалоги добротно озвучены.",
+    "en": "All dialogues are well voiced."
+  },
+  "ff7cd7925dbdb1ffe0e8f22334aa533bde249a23": {
+    "src": "Все диалоги сопровождаются портретами. Качество удивило!",
+    "en": "All dialogues are accompanied by portraits. The quality surprised me!"
+  },
+  "b67303a11674161ca845f5fd2efcb496766c8fbf": {
+    "src": "Все пупсы!",
+    "en": "All dolls!"
+  },
+  "29175df1a921a265b8ad8531d569f80e80e17107": {
+    "src": "Вторая часть во многом изобильнее.",
+    "en": "The second part is in many ways more abundant."
+  },
+  "121289f65b525d6bb65864416628eaf9ea7b433c": {
+    "src": "Вторая часть переехала в 3D.",
+    "en": "The second part moved to 3D."
+  },
+  "e3029200cd538df2af1c430120f68f878c655f03": {
+    "src": "Вторая часть про охоту на магов.",
+    "en": "The second part is about the hunt for magicians."
+  },
+  "ffe4a70f15e2e0cec30d53f12d1e177e8c17aef5": {
+    "src": "Вторая часть чуть серьёзнее, но тоже мультяшная.",
+    "en": "The second part is a little more serious, but also cartoonish."
+  },
+  "c752f86891af2741f4bb5f4b6c65166d5557f245": {
+    "src": "Вторая часть — обновлённая первая.",
+    "en": "The second part is an updated first."
+  },
+  "c8f208e72cb4aa7c82baf4d0237e493301b5f818": {
+    "src": "Выбор уровней через пациентов в коридоре.",
+    "en": "Selecting levels through patients in the corridor."
+  },
+  "b194acf2f5b1846917f11aef0bb2113b72b4fcd6": {
+    "src": "Гравитации подчинены не только мелкие частицы, но большие камни.",
+    "en": "Not only small particles, but also large stones are subject to gravity."
+  },
+  "8d52c52535ca71f6fef9aba878d89d57bbf89dbd": {
+    "src": "Гравитация изменена и тянет в центр.",
+    "en": "Gravity has changed and is pulling towards the center."
+  },
+  "a50d5d0667f62e4d934958a3573f6b8b74085a4c": {
+    "src": "Графика в духе Norton Commander — редкость.",
+    "en": "Graphics in the spirit of Norton Commander are rare."
+  },
+  "75e2a69a3616a408434e9d4114191620f46fc8ba": {
+    "src": "Данж перед боссом.",
+    "en": "Dungeon before the boss."
+  },
+  "cf0de0b165fc9ee0ddfca83d2a9e7b7b134f25f9": {
+    "src": "Дарвинийцам правда нужна твоя помощь.",
+    "en": "The Darwinians really need your help."
+  },
+  "90834e82bbc12aa2818ace62419c608252080600": {
+    "src": "Двое обучены магии Солнца и Луны. Третий обычный чувак.",
+    "en": "The two are trained in Sun and Moon magic. The third is an ordinary dude."
+  },
+  "4926cd0686f9aa3d0c46dfe910ceab7cb68357e5": {
+    "src": "Деньги просыпались из сумки. Бросить или запихивать обратно каждую пачку?",
+    "en": "Money spilled out of the bag. Throw or stuff back each pack?"
+  },
+  "45846237a6510bbefed762e2a8bba12f1402d003": {
+    "src": "Для атмосферы и ради эстетики игра даёт на выбор десятки палитр.",
+    "en": "For atmosphere and aesthetics, the game gives you dozens of palettes to choose from."
+  },
+  "155dfb0effc1a68a5f6fef2e26dff6cace431c68": {
+    "src": "Для игры создано множество модов с удобствами и косметикой.",
+    "en": "Many mods with amenities and cosmetics have been created for the game."
+  },
+  "6a85f327e12e6dc00938cad3e09ac3913fb5091b": {
+    "src": "Жуки ненавидят тебя и твой завод.",
+    "en": "The bugs hate you and your plant."
+  },
+  "18afe2ff18211810e9f219a20b858607ecbca35c": {
+    "src": "Загадки… ну, норм?",
+    "en": "Riddles... well, okay?"
+  },
+  "a378724d2714c17da7e068eaf36ced0d9b74cd84": {
+    "src": "Заносы. Чем дольше, тем лучше.",
+    "en": "Skids. The longer the better."
+  },
+  "4e9ec1df631d426c892e7f481105cc98198d541f": {
+    "src": "Злой идол разрушает всё лазерами из глаз.",
+    "en": "The evil idol destroys everything with lasers from his eyes."
+  },
+  "b7752aee60450e382363cf39f34340f24199cf79": {
+    "src": "Знакомься, болтай о жизни и увлечениях.",
+    "en": "Meet people, chat about life and hobbies."
+  },
+  "ac3dd249f1e4ccec99a121544500c6a296395def": {
+    "src": "Значимая часть игры это стелс.",
+    "en": "A significant part of the game is stealth."
+  },
+  "2727370c505a7dc1922b1b939c0e44de32a51998": {
+    "src": "И жили они долго и счастливо?",
+    "en": "And they lived happily ever after?"
+  },
+  "8f8f682792a9279aa6e3ef819a64f8e9f8cba142": {
+    "src": "Игра наполовину пиксельная, наполовину нарисована в традишке.",
+    "en": "The game is half pixel, half drawn in tradition."
+  },
+  "abb9ed414da58dfd4f9638eefef88ab99716e667": {
+    "src": "Игра не жалеет кровищи.",
+    "en": "The game does not spare blood."
+  },
+  "64ec13837f43354abb96d53f27d0b44f8583eec3": {
+    "src": "Игра не только про драки, но и про паркур.",
+    "en": "The game is not only about fighting, but also about parkour."
+  },
+  "e398c27acbd2717e5cfc78846ef6b4343363d8f8": {
+    "src": "Игра ощущается сном про пиксельный пост-апокалипсис.",
+    "en": "The game feels like a pixelated post-apocalypse dream."
+  },
+  "a3573e451a47e53924b870cd86e284c5d2e647e7": {
+    "src": "Игра удивит количеством сюжетных путей.",
+    "en": "The game will surprise you with the number of story paths."
+  },
+  "7f736d828e78cd46fc47bc752a5a9e3d232c57c9": {
+    "src": "Играть можно и за отдельного дварфа.",
+    "en": "You can also play as an individual dwarf."
+  },
+  "8464ac2f32aea3efb294b05c872190a6bec9a4bb": {
+    "src": "Игрок может выбирать тему для разговора.",
+    "en": "The player can choose a topic for conversation."
+  },
+  "c8b9c75e5c02bc76bccce76cf5eb73207bcec877": {
+    "src": "Из-за больного сердца ты попадаешь в школу для людей с инвалидностью.",
+    "en": "Because of a bad heart, you end up in a school for people with disabilities."
+  },
+  "5b773bbc089d288cf78ecdf98f641e7fd6c44d68": {
+    "src": "Каждый случай развлекает особым усложнением. Тут примешан бит от другого пациента.",
+    "en": "Each case entertains with a special complication. There's a bit mixed in here from another patient."
+  },
+  "636cb3ca024049cd96eab0c1e1e01a6101897b65": {
+    "src": "Кайфово разрезать огромные скалы.",
+    "en": "It's a thrill to cut through huge rocks."
+  },
+  "073208c2932e31424f12fc066be8f0f2dd5eb75b": {
+    "src": "Как в <strong>Undertale</strong> и <strong>Lisa</strong>, в бой вплетена история и юмор.",
+    "en": "Like <strong>Undertale</strong> and <strong>Lisa</strong>, there's story and humor woven into the combat."
+  },
+  "baab979b3b3668a96c45edf14b235a5147e29523": {
+    "src": "Как же мне нравятся цвета! А-а-а!!",
+    "en": "I really like the colors! Ahhh!!"
+  },
+  "e3062aac8b7806b41d31e04eaa5aa8eab5bb0d94": {
+    "src": "Как правило двафры строят крепость под землёй.",
+    "en": "As a rule, dvafr build a fortress underground."
+  },
+  "a858a151601c73a3b5bed5d5130b8526377b35d9": {
+    "src": "Карта подобная карте в <strong>Super Mario Bros 3.</strong>",
+    "en": "The map is similar to the map in <strong>Super Mario Bros 3</strong>"
+  },
+  "36193a67906d9b54b134ebe52c5bb8979e75682a": {
+    "src": "Карта, когда я раскрасил всё.",
+    "en": "Map when I colored everything."
+  },
+  "027782866a9ed4ed68cd120536c39881f067d6a6": {
+    "src": "Книга не цветная, но проходить через её было честнее.",
+    "en": "The book is not in color, but it was more honest to go through it."
+  },
+  "9f39756187800763b866b2ea40a179876b503a00": {
+    "src": "Комнаты перемещаются каждую ночь — Где сегодня коридор, завтра тупик.",
+    "en": "The rooms move every night - Where today there is a corridor, tomorrow there is a dead end."
+  },
+  "ea70bafb151dad2e763ef0847d018d880845ea0b": {
+    "src": "Комнаты под номерами. Конкретно эта напомнила <strong>The Riddle of the Maze.</strong>",
+    "en": "Rooms with numbers. This particular one reminded me of <strong>The Riddle of the Maze.</strong>"
+  },
+  "0cd193c119b13fb844dba0d84202528ca56f4172": {
+    "src": "Компьютер мастерски управляет кораблями.",
+    "en": "The computer masterfully controls the ships."
+  },
+  "d59dc27c0b7ca570114017a183e8997fc53aae56": {
+    "src": "Концовок много и они зависят от выполнения просьб уникальных покупателей.",
+    "en": "There are many endings and they depend on fulfilling the requests of unique customers."
+  },
+  "983733d21fac45a0c862929cd894c2b4d1454c31": {
+    "src": "Кооп на двоих.",
+    "en": "Co-op for two."
+  },
+  "dc2a63768fdc14012a6301acf4044f219a41fa2b": {
+    "src": "Корабли и самолёты тоже участвуют в боях.",
+    "en": "Ships and planes also participate in battles."
+  },
+  "e79153200d6a09c565d551b3d02e6490c6569b93": {
+    "src": "Корабль дрейфует, еда заканчивается.",
+    "en": "The ship is drifting, food is running out."
+  },
+  "a3356c25b56ff64d2f45135977a739f59edcc093": {
+    "src": "Корпус так легко мнётся, что в машине больше не чувствую себя в безопасности.",
+    "en": "The case gets wrinkled so easily that I no longer feel safe in the car."
+  },
+  "4014abeda05ac1612739b2c7d54e988e3fb50cea": {
+    "src": "Кошмар расцвёл в Гипер Демоне.",
+    "en": "A nightmare blossomed into the Hyper Demon."
+  },
+  "06e4fcada5f0a7cae2bbd9cd6b35729e4931a201": {
+    "src": "Кроме лягух встретятся и другие создания.",
+    "en": "In addition to frogs, you will also encounter other creatures."
+  },
+  "12bafc3767b8bca41e74a968d1471d3aa0ff90f0": {
+    "src": "Кульминация, как в кино — герои вымотаны и травмированы, но идут до конца.",
+    "en": "The climax is like in a movie - the heroes are exhausted and traumatized, but they go to the end."
+  },
+  "ed7216e78b597a47b4003bfa769232926241d3ec": {
+    "src": "Лабиринт продолжается даже глубоко под землёй.",
+    "en": "The labyrinth continues even deep underground."
+  },
+  "023da7efc19b059452c53743a6d6a42d625e63b3": {
+    "src": "Лазеры и конвееры.",
+    "en": "Lasers and conveyors."
+  },
+  "b5ed91849c0b5fc12d202be1cc0f5f0c0e2b14cd": {
+    "src": "Личность проводника открывается по мере путешествия.",
+    "en": "The identity of the guide is revealed as the journey progresses."
+  },
+  "bc692222b91ee309972706ff6a93550315bd711c": {
+    "src": "Магазин под землёй. Почему бы нет?",
+    "en": "The store is underground. Why not?"
+  },
+  "143024c7d959d577c8deb63402ff36911da80801": {
+    "src": "Мамонт тоже неуклюжий.",
+    "en": "The mammoth is also clumsy."
+  },
+  "32f1205ae5e01917288f0fdb1d134e4a84066250": {
+    "src": "Между миссиями игра раскрывается, как новелла.",
+    "en": "Between missions the game unfolds like a novella."
+  },
+  "32fae815467137d19238c16a2c52a22bf84f32f5": {
+    "src": "Мир живёт несколько лет прежде до пришествия игрока.",
+    "en": "The world lives several years before the arrival of the player."
+  },
+  "23e9012238cdebb3162049a4391ba3faa0359c2e": {
+    "src": "Мои инженеры уволились и пару гонок я не мог улучшать тачку.",
+    "en": "My engineers quit and for a couple of races I couldn’t improve the car."
+  },
+  "62b119f21f2830001ebafbb31ed2f63360fd5c93": {
+    "src": "На самом деле всё быстро становится понятным и развлекающим.",
+    "en": "In fact, everything quickly becomes understandable and entertaining."
+  },
+  "a07b7727d7147cee22bac23f48a879c856d811e9": {
+    "src": "На уровнях встречаются секреты за хрупкими стенами.",
+    "en": "At levels there are secrets behind fragile walls."
+  },
+  "69d06bbc744988787cb1e6655f23d01170f91c6f": {
+    "src": "Наггет понимает, что отговорки не помогут и прогуливать нельзя.",
+    "en": "Nugget understands that excuses won’t help and he can’t skip."
+  },
+  "2ffc4856cce4db73630ec1043b92eeb359b31e58": {
+    "src": "Напарники ходят вереницей.",
+    "en": "The partners walk in a line."
+  },
+  "818b7f2e3ef2e734a785ccf5515f45a52d0a79ed": {
+    "src": "Не все лягушки большие, но все агрессивны.",
+    "en": "Not all frogs are big, but all are aggressive."
+  },
+  "839aeb0d22cd93e4afcea28aaa4f5b61fef2a3c2": {
+    "src": "Не ожидал, но мне понравилась графика. Стильная!",
+    "en": "I didn't expect it, but I liked the graphics. Stylish!"
+  },
+  "ac80d335c7fba712530470eb926dbec9b70e74f2": {
+    "src": "Новые здания дают новые расы и профессии для спуска в подземелье.",
+    "en": "New buildings provide new races and professions for descent into the dungeon."
+  },
+  "9f5c7076e83200c8bd124e518b76fa9998dfc5be": {
+    "src": "Обожаю этот аккуратный простенький пиксель арт.",
+    "en": "I love this neat, simple pixel art."
+  },
+  "f92862fb675469f72af1ef2ab905171b7d82011a": {
+    "src": "Объединяет половинки.",
+    "en": "Unites halves."
+  },
+  "1c57035bc50b21e5ba7779e5f6b107ef684b45a5": {
+    "src": "Органон! О, Органон! О, о, о, Органон! Эндштасьён! Армагеддон! О, о, о Органон!",
+    "en": "Organon! O Organon! Oh, oh, oh, Organon! Endstasyon! Armageddon! Oh, oh, oh Organon!"
+  },
+  "c6829cf4713a22aebed4c05daaacd418a0352deb": {
+    "src": "Отомсти за неё.",
+    "en": "Avenge her."
+  },
+  "9313ae18be660ddafc3c1a44e41ff377ee8e56f5": {
+    "src": "Охота за сокровищем идёт во время редкого солнечного затмения. Второго шанса не будет.",
+    "en": "The hunt for the treasure takes place during a rare solar eclipse. There will be no second chance."
+  },
+  "965d649293106a29cdf69cca14815bb9a4ce3fc1": {
+    "src": "Первая часть была с видом сбоку.",
+    "en": "The first part was a side view."
+  },
+  "404ef5f1c10a76afde9111fd2fba71a7f85cc88c": {
+    "src": "Персонаж из ролика залетит прямо в игровой экран.",
+    "en": "The character from the video will fly straight into the game screen."
+  },
+  "5bf4b83d093dca28326d19e4f21d3de288568939": {
+    "src": "Персонажи запоминаются. Этот растяпа понравился больше всех.",
+    "en": "The characters are memorable. I liked this bungler the most."
+  },
+  "71114c56c6a1225ed3f2ad6f667dd5abe5f175f4": {
+    "src": "По бутылкам стреляй. По помощнику — нет.",
+    "en": "Shoot at the bottles. As for the assistant - no."
+  },
+  "b8d8e5f5fd5a886354bca13df14cb0d8172071ed": {
+    "src": "По мере прохождения персонаж становится сильнее.",
+    "en": "As you progress, the character becomes stronger."
+  },
+  "ba70c523d073884ff39a9ee74449d7ef6098d28c": {
+    "src": "По уровням раскиданы музыкальные кассеты, которые обогащают саундтрек. Он хорош!",
+    "en": "Music cassettes are scattered throughout the levels, which enrich the soundtrack. He's good!"
+  },
+  "fb1e523d91fedf3c1d14284b46503cfbd7f7c3b9": {
+    "src": "Победа?",
+    "en": "Victory?"
+  },
+  "64cb0253194c41a181f9a7cb45d152f1721969ae": {
+    "src": "Повествование слева. Инфа о герое справа.",
+    "en": "Narration on the left. Info about the hero on the right."
+  },
+  "2c1616780934b5a6bcbb085ac8e36b182bd36f37": {
+    "src": "Погода портится и вынуждает сменить резину.",
+    "en": "The weather deteriorates and forces you to change tires."
+  },
+  "f6a679b87f3efc61bfe76e4f2e73d8f8bd5d7219": {
+    "src": "Понравилась графика. Стильная!",
+    "en": "I liked the graphics. Stylish!"
+  },
+  "037b90a4c9b3818f909e8342001940ca1cc5e8de": {
+    "src": "Понравился экран снаряжения.",
+    "en": "I liked the equipment screen."
+  },
+  "0448eb65a7eba0c0ba661c8be6eb1eee11d5d4e0": {
+    "src": "Понял! Принял!",
+    "en": "Understood! Got it!"
+  },
+  "5db07a8336190fb70d4947cb440b4e86b930a4b6": {
+    "src": "Популярное развлечение.",
+    "en": "Popular entertainment."
+  },
+  "b18295193a4e0835086390ac4f9617243bfee84a": {
+    "src": "После прохождения уровня покажут запись со всеми попытками.",
+    "en": "After completing the level, a recording of all attempts will be shown."
+  },
+  "bfd62aeb00645b882df846a8e9226c25fcc5eae5": {
+    "src": "Предупреждение о большом количестве пауков.",
+    "en": "Warning for large numbers of spiders."
+  },
+  "4e71bd68f8f210a65beff0310bdfb6430fa0f82e": {
+    "src": "При том, что в особняке полно спален, тебе придётся спать на улице.",
+    "en": "Given that the mansion is full of bedrooms, you will have to sleep outside."
+  },
+  "f2daaf63a4eeab5c8b59de0b063ba448b712e75e": {
+    "src": "Прости, друг!",
+    "en": "Sorry, friend!"
+  },
+  "69b6d777b38781a9040b6fb73e5353b582f7eff6": {
+    "src": "Протагонист Mother 3. Один из братьев, чьи пути разойдутся.",
+    "en": "Protagonist of Mother 3. One of the brothers whose paths will diverge."
+  },
+  "06e8ff21735e2ceabfc9469c80e7e1cb82922a7b": {
+    "src": "Противники гигантские и быстрые.",
+    "en": "The enemies are gigantic and fast."
+  },
+  "8c200801649f2edf4f6bf349358c744e3f9a956a": {
+    "src": "Психоделия и нагромождения из слов.",
+    "en": "Psychedelia and jumbles of words."
+  },
+  "cf4cf92e42b4b4020ab97203abf31dab0142f47d": {
+    "src": "Растяпа. Понравился больше всех.",
+    "en": "Bungler. I liked it the most."
+  },
+  "340ff01feb41ccfa0edbb35cc6f8c12ec163a160": {
+    "src": "Реалистичная подвеска.",
+    "en": "Realistic pendant."
+  },
+  "c3d0adb1530cf8a8b82cf84665591620245c04d7": {
+    "src": "Результат ограбления алкогольного магазина.",
+    "en": "The result of a robbery at a liquor store."
+  },
+  "244b9f9a1d79f4350ce772926a70a1380201f3ee": {
+    "src": "Рейдеры против пещерных людей.",
+    "en": "Raiders versus cavemen."
+  },
+  "6e343de7f1e124dbed48f149f9375623cccd6383": {
+    "src": "Рельсотрон или огнемёт — миссии короткие и удастся попробовать всё!",
+    "en": "Railgun or flamethrower - the missions are short and you can try everything!"
+  },
+  "27755b5619d04c2ce912d9f58ffb168ffe1bfc08": {
+    "src": "С прибытием!",
+    "en": "Welcome!"
+  },
+  "377925f1bad26339113cf09cdee9a3fa0cdafc29": {
+    "src": "Самолёт огромный, но летающие крепости будут ещё больше.",
+    "en": "The plane is huge, but the flying fortresses will be even bigger."
+  },
+  "a097a2a5f8dd1a0c4693dbfca2d611265ad7f007": {
+    "src": "Санта сбит. Подарков не будет.",
+    "en": "Santa is shot down. There will be no gifts."
+  },
+  "de29873d74bf9441e78dd259c41de426908907d6": {
+    "src": "Своя колония даёт постоянную прибыль.",
+    "en": "Your own colony provides constant income."
+  },
+  "44a557dcad3e4d80f8e51dcde762a4c9fa75148a": {
+    "src": "Секретный ретро-уровень.",
+    "en": "Secret retro level."
+  },
+  "ab4a5831418e78f89ba140b9bd87ce482eddd155": {
+    "src": "Снаряжай самолёты на свой вкус.",
+    "en": "Equip planes to your taste."
+  },
+  "3098f95e870567bead49f594b4e7a33cf630e563": {
+    "src": "Сотрудники ждут назначения.",
+    "en": "Employees are waiting for an appointment."
+  },
+  "4a7ca1242e0d09af404a1536d895c1aa96fa6697": {
+    "src": "Сражения становятся сюрреалистичными.",
+    "en": "The battles become surreal."
+  },
+  "9d624975b3d01988ee263c7beb3dfba4252b5565": {
+    "src": "Сталкивай, поджигай, заманивай на шипы.",
+    "en": "Push them, set them on fire, lure them onto the spikes."
+  },
+  "f2e80ccf2ced61f0c95e020ec1c6872d50c0a223": {
+    "src": "Столкновения планет и звёзд — игра заранее подготовила несколько сцен.",
+    "en": "Collisions of planets and stars - the game prepared several scenes in advance."
+  },
+  "a00d1a57a57231b0e30c8a58fe3db0156a80d063": {
+    "src": "Тайни действительно кажется мелким на фоне окружения.",
+    "en": "Tiny really seems small compared to his surroundings."
+  },
+  "03fbd81254594925328c8b41129d3ea92680d6b0": {
+    "src": "Толкай коробки. Берегись лазеров.",
+    "en": "Push boxes. Beware of lasers."
+  },
+  "6426b30966d138b294f758f176039e08977e68dd": {
+    "src": "Ужасный конец человечества.",
+    "en": "A terrible end to humanity."
+  },
+  "93530b8f81dfefc3b973c0cbbfd771d34ffdac4a": {
+    "src": "Упс!",
+    "en": "Oops!"
+  },
+  "d8d928b8cad3d4a48cc64a15f2745d8c62fc0bc8": {
+    "src": "Успешные походы в подземелья помогут городу расти.",
+    "en": "Successful dungeon crawls will help the city grow."
+  },
+  "0f871961c93ea6e2190de7f2cfe2a92aeef97b76": {
+    "src": "Уютная хижина обрастает трофеями и подарками от местных скалолазов.",
+    "en": "The cozy hut is filled with trophies and gifts from local climbers."
+  },
+  "13fe0a0618d0cfddf6bfc3749e8a63f5b431ec28": {
+    "src": "Фотки можно вклеить в дневник, вместе со стикерами и стишками. Мило!",
+    "en": "Photos can be pasted into a diary, along with stickers and rhymes. Cute!"
+  },
+  "4cc70cbe730fdf9d2e1c6279e21817b6f9df8c16": {
+    "src": "Химера-сороконожка спускается за тобой.",
+    "en": "The chimera centipede descends for you."
+  },
+  "02cc8b8e13c527f3f4ad474afe92592856e181dc": {
+    "src": "Части тел повреждаются, мутируют и заменяются имплантами.",
+    "en": "Body parts are damaged, mutated and replaced with implants."
+  },
+  "57669c54c72358d105b0365bf23f1de328cef520": {
+    "src": "Четвёртая часть лучше всего передавала насколько угрожающе наплывал крипер.",
+    "en": "The fourth part best conveyed how menacingly the creeper swam."
+  },
+  "13d1e179d6c663c175e2bf1c5b36f07d6ba1f43e": {
+    "src": "Что такое стоки? Я не знаю. Цена упала — покупай. Поднялась — продавай.",
+    "en": "What are drains? I don't know. The price has dropped - buy it. Got up - sell."
+  },
+  "03e389355fc4045bd8bd8395948f4d8c7e2d9384": {
+    "src": "Штампы о покорении ставятся в специальный альбом.",
+    "en": "Stamps about the conquest are placed in a special album."
+  },
+  "1835007abc071126c13de67a80fcc2b202ddeb70": {
+    "src": "Язык в игре зашифрован.",
+    "en": "The language in the game is encrypted."
   }
 }
