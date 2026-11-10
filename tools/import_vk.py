@@ -81,15 +81,123 @@ MEDIA_HEADERS = {
 
 TRANS_URL = "https://clients5.google.com/translate_a/t"
 ALLOWED_INLINE = {"a", "strong", "em", "b", "i", "u", "s", "br"}
+DOT_LEADER_RE = re.compile(r"\s+(?:\.\s*){3,}")
 
 SERIES_TITLE_RU = "Во что сыграть? 400 инди игр!"
 SERIES_TITLE_EN = "What to Play? 400 Indie Games!"
 SERIES_SUBTITLE_RU = (
-    "17 частей: подборки инди-игр по жанрам, механикам и настроению."
+    "Подборки разделены по жанрам. Не строго, но уже удобнее гигантского списка.",
+    "Самые-самые в подборке отмечены ★.",
 )
 SERIES_SUBTITLE_EN = (
-    "17 parts: indie games grouped by genre, mechanics and mood."
+    "The collections are grouped by genre. Not strictly, but already more convenient than a giant list.",
+    "The very best in each collection are marked with ★.",
 )
+
+ARTICLE_META = {
+    "brodilka-sverhu-rt": {
+        "title_ru": "Вид сверху. Бои в реальном времени.",
+        "title_en": "Top-down. Real-time combat.",
+        "excerpt_ru": "На обложке: Radio the Universe.",
+        "excerpt_en": "Cover: Radio the Universe.",
+    },
+    "brodilka-sverhu-tb": {
+        "title_ru": "Вид сверху. Пошаговые бои.",
+        "title_en": "Top-down. Turn-based combat.",
+        "excerpt_ru": "На обложке: Battle Brothers.",
+        "excerpt_en": "Cover: Battle Brothers.",
+    },
+    "brodilka-sboku": {
+        "title_ru": "Бродилки. Вид сбоку.",
+        "title_en": "Side-scrolling action.",
+        "excerpt_ru": "На обложке: Tail of Iron.",
+        "excerpt_en": "Cover: Tail of Iron.",
+    },
+    "ot-pervogo": {
+        "title_ru": "Вид из глаз.",
+        "title_en": "First-person view.",
+        "excerpt_ru": "На обложке: Super HOT.",
+        "excerpt_en": "Cover: Super HOT.",
+    },
+    "brodilki-ot-3-lica": {
+        "title_ru": "Бродилки от третьего лица.",
+        "title_en": "Third-person exploration.",
+        "excerpt_ru": "На обложке: Tiny and Big in: Grandpa's leftovers.",
+        "excerpt_en": "Cover: Tiny and Big in: Grandpa's leftovers.",
+    },
+    "golovolomki": {
+        "title_ru": "Головоломки.",
+        "title_en": "Puzzles.",
+        "excerpt_ru": "На обложке: FEZ.",
+        "excerpt_en": "Cover: FEZ.",
+    },
+    "kvesty": {
+        "title_ru": "Квесты.",
+        "title_en": "Adventure games.",
+        "excerpt_ru": "На обложке: Night in the Woods.",
+        "excerpt_en": "Cover: Night in the Woods.",
+    },
+    "guitar-hero": {
+        "title_ru": "Ритм.",
+        "title_en": "Rhythm.",
+        "excerpt_ru": "На обложке: Super Crazy Guitar Maniac Deluxe.",
+        "excerpt_en": "Cover: Super Crazy Guitar Maniac Deluxe.",
+    },
+    "sostavlenie-muzyki": {
+        "title_ru": "Составление музыки.",
+        "title_en": "Music making.",
+        "excerpt_ru": "На обложке: Incredibox.",
+        "excerpt_en": "Cover: Incredibox.",
+    },
+    "phizika-pesochnica": {
+        "title_ru": "Физические песочницы.",
+        "title_en": "Physics sandboxes.",
+        "excerpt_ru": "На обложке: Universe Sandbox.",
+        "excerpt_en": "Cover: Universe Sandbox.",
+    },
+    "zashita-bashnyami": {
+        "title_ru": "Защита башнями.",
+        "title_en": "Tower defense.",
+        "excerpt_ru": "На обложке: Kingdom Rush.",
+        "excerpt_en": "Cover: Kingdom Rush.",
+    },
+    "stratezhki": {
+        "title_ru": "Стратежки.",
+        "title_en": "Strategy games.",
+        "excerpt_ru": "На обложке: Starsector.",
+        "excerpt_en": "Cover: Starsector.",
+    },
+    "gonki": {
+        "title_ru": "Гонки.",
+        "title_en": "Racing.",
+        "excerpt_ru": "На обложке: Nitronic Rush.",
+        "excerpt_en": "Cover: Nitronic Rush.",
+    },
+    "letalki": {
+        "title_ru": "Леталки.",
+        "title_en": "Flight games.",
+        "excerpt_ru": "На обложке: Sky Rogue.",
+        "excerpt_en": "Cover: Sky Rogue.",
+    },
+    "novelly": {
+        "title_ru": "Новеллы.",
+        "title_en": "Visual novels.",
+        "excerpt_ru": "На обложке: Slay the Princess.",
+        "excerpt_en": "Cover: Slay the Princess.",
+    },
+    "zapusk-flash": {
+        "title_ru": "Запуск и поиск Flash игр.",
+        "title_en": "Running and finding Flash games.",
+        "excerpt_ru": "Сейчас запустить флешки трудно, но реально.",
+        "excerpt_en": "Running Flash games is hard nowadays, but possible.",
+    },
+    "poisk-indie": {
+        "title_ru": "Где искать инди игры?",
+        "title_en": "Where to find indie games?",
+        "excerpt_ru": "Ответы для тех, кто хочет поискать игры сам.",
+        "excerpt_en": "Answers for those who want to find games on their own.",
+    },
+}
 
 MONTHS = {
     "янв": "Jan",
@@ -552,11 +660,19 @@ def parse_article(slug: str, url: str, order: int) -> dict:
         excerpt_ru = "Подборка инди-игр с описаниями и скриншотами."
     excerpt_ru = truncate(excerpt_ru, 180)
 
-    title_en = (
-        f"{SERIES_TITLE_EN} (Part {part})"
-        if match
-        else title_ru
-    )
+    meta = ARTICLE_META.get(slug)
+    if meta:
+        title_ru = meta["title_ru"]
+        title_en = meta["title_en"]
+        excerpt_ru = meta["excerpt_ru"]
+        excerpt_en = meta["excerpt_en"]
+    else:
+        title_en = (
+            f"{SERIES_TITLE_EN} (Part {part})"
+            if match
+            else title_ru
+        )
+        excerpt_en = ""
 
     return {
         "slug": slug,
@@ -573,6 +689,7 @@ def parse_article(slug: str, url: str, order: int) -> dict:
         "cover": cover,
         "blocks": blocks,
         "excerpt_ru": excerpt_ru,
+        "excerpt_en": excerpt_en,
         "thumb_key": f"thumb:{slug}",
     }
 
@@ -920,7 +1037,8 @@ def collect_translation_sources(articles: list[dict]) -> set[str]:
             sources.add(value)
 
     for article in articles:
-        add(article["excerpt_ru"])
+        if not article.get("excerpt_en"):
+            add(article["excerpt_ru"])
         cover = article.get("cover")
         if cover:
             add(cover.get("caption", ""))
@@ -1114,8 +1232,13 @@ def render_photos(
     )
 
 
-def render_gif(block: dict, article: dict, cache: dict, lang: str) -> str:
+def render_gif(
+    block: dict, article: dict, cache: dict, lang: str, *, intro: bool = False
+) -> str:
     path = url_path(block.get("path"))
+    figure_class = "article-figure article-figure--gif"
+    if intro:
+        figure_class += " article-intro__figure"
     caption = render_caption(
         block.get("caption", ""),
         block.get("caption_text", ""),
@@ -1132,7 +1255,7 @@ def render_gif(block: dict, article: dict, cache: dict, lang: str) -> str:
         )
     alt = esc(truncate(media_caption_plain(block, article, cache, lang), 120))
     return (
-        '<figure class="article-figure article-figure--gif">'
+        f'<figure class="{figure_class}">'
         f'<a href="{esc(path)}" target="_blank" rel="noopener noreferrer">'
         f'<img src="{esc(path)}" alt="{alt}" loading="lazy" decoding="async">'
         "</a>"
@@ -1141,9 +1264,14 @@ def render_gif(block: dict, article: dict, cache: dict, lang: str) -> str:
     )
 
 
-def render_video(block: dict, article: dict, cache: dict, lang: str) -> str:
+def render_video(
+    block: dict, article: dict, cache: dict, lang: str, *, intro: bool = False
+) -> str:
     path = url_path(block.get("path"))
     poster = url_path(block.get("poster_path"))
+    figure_class = "article-figure article-figure--video"
+    if intro:
+        figure_class += " article-intro__figure"
     caption = render_caption(
         block.get("caption", ""),
         block.get("caption_text", ""),
@@ -1156,7 +1284,7 @@ def render_video(block: dict, article: dict, cache: dict, lang: str) -> str:
                 "Watch video on VK" if lang == "en" else "Смотреть видео на VK"
             )
             return (
-                '<figure class="article-figure article-figure--video">'
+                f'<figure class="{figure_class}">'
                 f'<img src="{esc(poster)}" alt="" loading="lazy">'
                 '<p class="media-missing">'
                 f'<a href="{esc(article["url"])}" target="_blank" '
@@ -1172,7 +1300,7 @@ def render_video(block: dict, article: dict, cache: dict, lang: str) -> str:
         )
     poster_attr = f' poster="{esc(poster)}"' if poster else ""
     return (
-        '<figure class="article-figure article-figure--video">'
+        f'<figure class="{figure_class}">'
         '<video autoplay loop muted playsinline preload="metadata"'
         f"{poster_attr}>"
         f'<source src="{esc(path)}" type="video/mp4">'
@@ -1229,6 +1357,38 @@ def render_cover(article: dict, cache: dict, lang: str) -> str:
     return ""
 
 
+def render_toc_list(block: dict, cache: dict, lang: str) -> str:
+    items = []
+    for item_html in block["items"]:
+        rendered = tr_html(item_html, cache, lang)
+        soup = BeautifulSoup(rendered, "html.parser")
+        link = soup.find("a")
+        action_html = ""
+        if link is not None:
+            action_html = str(link)
+            link.extract()
+        for node in soup.find_all(string=True):
+            text = str(node)
+            if DOT_LEADER_RE.search(text):
+                node.replace_with(DOT_LEADER_RE.sub(" ", text))
+        title = normalize_space(soup.get_text(" ", strip=True))
+        if not action_html:
+            marker = title.find("→")
+            if marker >= 0:
+                action_html = esc(title[marker:].strip())
+                title = title[:marker].strip()
+        if not title:
+            title = normalize_space(strip_tags(rendered))
+        items.append(
+            '<li class="toc__item">'
+            f'<span class="toc__title">{esc(title)}</span>'
+            '<span class="toc__leader" aria-hidden="true"></span>'
+            f'<span class="toc__action">{action_html}</span>'
+            "</li>"
+        )
+    return f'<ul class="toc">{"".join(items)}</ul>'
+
+
 def render_block(block: dict, article: dict, cache: dict, lang: str) -> str:
     block_type = block["type"]
     if block_type == "p":
@@ -1244,6 +1404,8 @@ def render_block(block: dict, article: dict, cache: dict, lang: str) -> str:
     if block_type == "blockquote":
         return f"<blockquote>{tr_html(block['html'], cache, lang)}</blockquote>"
     if block_type == "list":
+        if any(DOT_LEADER_RE.search(item) for item in block["items"]):
+            return render_toc_list(block, cache, lang)
         items = "".join(
             f"<li>{tr_html(item, cache, lang)}</li>" for item in block["items"]
         )
@@ -1255,6 +1417,81 @@ def render_block(block: dict, article: dict, cache: dict, lang: str) -> str:
     if block_type == "video":
         return render_video(block, article, cache, lang)
     return ""
+
+
+def is_decorative_separator(block: dict) -> bool:
+    if block.get("type") != "p":
+        return False
+    text = strip_tags(block.get("html", ""))
+    return (
+        len(text) >= 40
+        and text.count("•") >= 6
+        and ("/" in text or "\\" in text)
+    )
+
+
+def intro_layout(article: dict) -> tuple[int, int] | None:
+    blocks = article.get("blocks", [])
+    cover_index = next(
+        (i for i, block in enumerate(blocks) if block.get("kind") == "cover"),
+        None,
+    )
+    if cover_index is None:
+        return None
+    for end_index in range(cover_index + 1, len(blocks)):
+        if is_decorative_separator(blocks[end_index]):
+            if end_index > cover_index + 1:
+                return cover_index, end_index
+            return None
+    return None
+
+
+def render_article_body(article: dict, cache: dict, lang: str) -> str:
+    blocks = article["blocks"]
+    layout = intro_layout(article)
+    if layout is None:
+        return "\n".join(
+            render_block(block, article, cache, lang) for block in blocks
+        )
+
+    cover_index, end_index = layout
+    cover = blocks[cover_index]
+    if cover["type"] == "gif":
+        cover_html = render_gif(cover, article, cache, lang, intro=True)
+    elif cover["type"] == "video":
+        cover_html = render_video(cover, article, cache, lang, intro=True)
+    else:
+        cover_html = render_block(cover, article, cache, lang)
+    intro_text = "\n".join(
+        render_block(block, article, cache, lang)
+        for block in blocks[cover_index + 1 : end_index]
+    )
+
+    parts = [
+        render_block(block, article, cache, lang)
+        for block in blocks[:cover_index]
+    ]
+    parts.append(
+        '<div class="article-intro">'
+        f'<div class="article-intro__media">{cover_html}</div>'
+        f'<div class="article-intro__text">{intro_text}</div>'
+        "</div>"
+    )
+    tail_blocks = blocks[end_index:]
+    has_lead_games = any(block["type"] == "h3" for block in tail_blocks)
+    seen_first_game = False
+    for block in tail_blocks:
+        if block["type"] == "h3":
+            seen_first_game = True
+        elif (
+            has_lead_games
+            and not seen_first_game
+            and block["type"] == "h2"
+        ):
+            continue
+        parts.append(render_block(block, article, cache, lang))
+
+    return "\n".join(part for part in parts if part)
 
 
 def lightbox_markup(lang: str) -> str:
@@ -1286,11 +1523,12 @@ def lightbox_markup(lang: str) -> str:
 
 def topbar(lang: str, href: str, switch_href: str) -> str:
     home = f"/{lang}/"
+    brand_label = "Все статьи" if lang == "ru" else "All articles"
     switch_label = "EN" if lang == "ru" else "RU"
     switch_lang = "en" if lang == "ru" else "ru"
     return (
         '<header class="topbar"><div class="topbar__inner">'
-        f'<a class="brand" href="{home}">Dreamkilled</a>'
+        f'<a class="brand" href="{home}">{brand_label}</a>'
         '<nav class="lang-switch">'
         f'<a href="{esc(switch_href)}" hreflang="{switch_lang}">{switch_label}</a>'
         "</nav></div></header>"
@@ -1299,9 +1537,9 @@ def topbar(lang: str, href: str, switch_href: str) -> str:
 
 def footer(lang: str) -> str:
     if lang == "en":
-        text = "Articles about indie games and recommendations."
+        text = "Micro-reviews of indie games."
     else:
-        text = "Статьи об инди-играх и рекомендациях."
+        text = "Микро-обзоры инди-игр."
     return (
         '<footer class="footer"><div class="footer__inner">'
         f"<span>{esc(text)}</span>"
@@ -1350,19 +1588,17 @@ def render_article(
     next_article = articles[index + 1] if index < len(articles) - 1 else None
 
     title = article["title_ru"] if lang == "ru" else article["title_en"]
-    date = article["date_ru"] if lang == "ru" else article["date_en"]
     excerpt = article["excerpt_ru"]
     if lang == "en":
-        excerpt = tr_plain(article["excerpt_ru"], cache, lang)
-    description = truncate(excerpt, 180)
+        excerpt = article.get("excerpt_en") or tr_plain(
+            article["excerpt_ru"], cache, lang
+        )
+    description = truncate(f"{title} {excerpt}", 180)
 
-    body = "\n".join(
-        render_block(block, article, cache, lang) for block in article["blocks"]
-    )
+    body = render_article_body(article, cache, lang)
 
     switch_href = f"/{'en' if lang == 'ru' else 'ru'}/{article['slug']}/"
-    source_label = "Оригинал на VK" if lang == "ru" else "Original on VK"
-    back_label = "К списку статей" if lang == "ru" else "All articles"
+    source_prefix = "Оригинал на " if lang == "ru" else "Original on "
     prev_label = "Предыдущая" if lang == "ru" else "Previous"
     next_label = "Следующая" if lang == "ru" else "Next"
 
@@ -1394,29 +1630,35 @@ def render_article(
     else:
         nav_parts.append("<span></span>")
 
+    nav_content = "".join(nav_parts)
+    top_nav = (
+        '<nav class="article-nav article-nav--top">'
+        f"{nav_content}"
+        "</nav>\n"
+    )
+    bottom_nav = (
+        '<nav class="article-nav">'
+        f"{nav_content}"
+        "</nav>\n"
+    )
+
     thumb = url_path(article.get("thumb_path"))
     og_image = thumb or None
 
     return (
         head(lang, f"{title} — Dreamkilled", description, og_image)
         + f"<body>\n{topbar(lang, f'/{lang}/', switch_href)}\n"
-        + '<main class="container">\n<article class="article">\n'
+        + '<main class="container">\n'
+        + top_nav
+        + '<article class="article">\n'
         + f'<h1 class="article__title">{esc(title)}</h1>\n'
-        + '<div class="article__meta">'
-        + (
-            f'<time datetime="{esc(article["date_iso"])}">{esc(date)}</time>'
-            if article.get("date_iso")
-            else f"<span>{esc(date)}</span>"
-        )
+        + f'\n<div class="article__body">\n{body}\n'
+        + f'<p class="article__source">{source_prefix}'
         + f'<a href="{esc(article["url"])}" target="_blank" '
-        + f'rel="noopener noreferrer">{source_label}</a>'
+        + 'rel="noopener noreferrer">VK</a></p>\n'
         + "</div>\n"
-        + f'\n<div class="article__body">\n{body}\n</div>\n'
         + "</article>\n"
-        + '<nav class="article-nav">'
-        + "".join(nav_parts)
-        + "</nav>\n"
-        + f'<p class="back-link"><a href="/{lang}/">{back_label}</a></p>\n'
+        + bottom_nav
         + "</main>\n"
         + footer(lang)
         + "\n"
@@ -1427,10 +1669,11 @@ def render_article(
 
 def render_card(article: dict, cache: dict, lang: str) -> str:
     title = article["title_ru"] if lang == "ru" else article["title_en"]
-    date = article["date_ru"] if lang == "ru" else article["date_en"]
     excerpt = article["excerpt_ru"]
     if lang == "en":
-        excerpt = tr_plain(article["excerpt_ru"], cache, lang)
+        excerpt = article.get("excerpt_en") or tr_plain(
+            article["excerpt_ru"], cache, lang
+        )
     excerpt = truncate(excerpt, 170)
     part_label = f"Часть {article['part']}" if lang == "ru" else f"Part {article['part']}"
     thumb = url_path(article.get("thumb_path"))
@@ -1453,7 +1696,6 @@ def render_card(article: dict, cache: dict, lang: str) -> str:
         + '<div class="card__body">'
         + f'<div class="card__part">{esc(part_label)}</div>'
         + f'<h2 class="card__title">{esc(title)}</h2>'
-        + f'<div class="card__date">{esc(date)}</div>'
         + f'<p class="card__excerpt">{esc(excerpt)}</p>'
         + "</div></a>"
     )
@@ -1464,12 +1706,14 @@ def render_index(
 ) -> str:
     if lang == "ru":
         title = SERIES_TITLE_RU
-        subtitle = SERIES_SUBTITLE_RU
+        subtitle_lines = SERIES_SUBTITLE_RU
         page_title = f"{title} — Dreamkilled"
     else:
         title = SERIES_TITLE_EN
-        subtitle = SERIES_SUBTITLE_EN
+        subtitle_lines = SERIES_SUBTITLE_EN
         page_title = f"{title} — Dreamkilled"
+    subtitle = " ".join(subtitle_lines)
+    subtitle_html = "<br>".join(esc(line) for line in subtitle_lines)
     cards = "\n".join(render_card(article, cache, lang) for article in articles)
     switch_href = "/en/" if lang == "ru" else "/ru/"
     return (
@@ -1477,7 +1721,7 @@ def render_index(
         + f"<body>\n{topbar(lang, f'/{lang}/', switch_href)}\n"
         + '<main class="container">\n'
         + f'<h1 class="page-title">{esc(title)}</h1>\n'
-        + f'<p class="page-subtitle">{esc(subtitle)}</p>\n'
+        + f'<p class="page-subtitle">{subtitle_html}</p>\n'
         + f'<div class="cards">\n{cards}\n</div>\n'
         + "</main>\n"
         + footer(lang)
@@ -1492,14 +1736,13 @@ def render_root() -> str:
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         '<meta name="color-scheme" content="dark">\n'
         '<meta name="theme-color" content="#141414">\n'
-        "<title>Dreamkilled</title>\n"
-        '<meta name="description" content="Статьи об инди-играх и рекомендации.">\n'
+        "<title>Во что сыграть? — Dreamkilled</title>\n"
+        '<meta name="description" content="Рекомендую 400 инди игр! Подборки инди-игр по жанрам.">\n'
         '<link rel="stylesheet" href="/style.css">\n'
         "</head>\n<body>\n"
         '<main class="landing"><div class="landing__inner">\n'
-        '<p class="landing__eyebrow">17 статей</p>\n'
-        '<h1 class="landing__title">Dreamkilled</h1>\n'
-        '<p class="landing__subtitle">Статьи об инди-играх и рекомендации.</p>\n'
+        '<h1 class="landing__title">Во что сыграть?</h1>\n'
+        '<p class="landing__subtitle">Рекомендую 400 инди игр!</p>\n'
         '<div class="landing__links">\n'
         '<a class="landing__link" href="/ru/">Русский</a>\n'
         '<a class="landing__link" href="/en/">English</a>\n'
