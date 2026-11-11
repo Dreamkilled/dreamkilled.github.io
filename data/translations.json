@@ -4650,5 +4650,185 @@
   "1835007abc071126c13de67a80fcc2b202ddeb70": {
     "src": "Язык в игре зашифрован.",
     "en": "The language in the game is encrypted."
+  },
+  "e8a32176d292f63dc80f61a2f3f59aa6da4a8dc4": {
+    "src": "головоломка",
+    "en": "puzzle"
+  },
+  "31429172a823f4145945446dee62a73626f70f3f": {
+    "src": "платформер",
+    "en": "platformer"
+  },
+  "4638a52d73f1b6c6d4963ff541ef9cfe712f2bdd": {
+    "src": "хоррор",
+    "en": "horror"
+  },
+  "8ebf95f9c4528c26f3462d83ed978a407e9f8925": {
+    "src": "Хоррор. Тебя наняли ремонтировать космическую станцию.",
+    "en": "Horror. You've been hired to repair a space station."
+  },
+  "1a1b16ca66d1b849f57a51b26318ec70e97189b3": {
+    "src": "Хочется достать плазменный резак, но это не <strong>Dead Space</strong>.",
+    "en": "I want to get a plasma cutter, but this is not <strong>Dead Space</strong>."
+  },
+  "a00fcece556daada24f839714f0c99beb58ae27d": {
+    "src": "асинхронный кооп",
+    "en": "asynchronous co-op"
+  },
+  "6c50c021f0f1e85bbc0d1ee25cdd95d225522c27": {
+    "src": "бетон",
+    "en": "concrete"
+  },
+  "10c66312ab73a192f0e2a464e4ad4783e79196ed": {
+    "src": "бытовуха",
+    "en": "household items"
+  },
+  "cf4b8491f1e1a75f006caff2329a4adda7a4fde3": {
+    "src": "глубина",
+    "en": "depth"
+  },
+  "ec26ac8f35109c20137c00edfadfa13e305f191b": {
+    "src": "дарк солс платформер",
+    "en": "dark souls platformer"
+  },
+  "bc1afa4ef92fa9112c41960b41a26c41fc494ed4": {
+    "src": "драка от первого лица",
+    "en": "first person fight"
+  },
+  "35c1d45da45f593d68cbc48d93227b6d7758c432": {
+    "src": "замедление времени",
+    "en": "time dilation"
+  },
+  "9d4bd15d6a285d2695167afd78a61eefa0eb905d": {
+    "src": "история",
+    "en": "story"
+  },
+  "a183a1625fa9825f3837169938aaa1259e504c29": {
+    "src": "колония",
+    "en": "colony"
+  },
+  "e2610f7b7654e4a5d144bacf31d100ff81ce4256": {
+    "src": "командный шутер",
+    "en": "team shooter"
+  },
+  "5a9c7cc7a1cfb0fbdc389c314c780197e8a108d6": {
+    "src": "кооп",
+    "en": "co-op"
+  },
+  "071c3350a9a2878252bcf413e99e7d4002ac9aef": {
+    "src": "кража",
+    "en": "theft"
+  },
+  "3c0dc4c81438def706582fc8a9ad47648c26743d": {
+    "src": "линукс",
+    "en": "Linux"
+  },
+  "0afbdc98f751ae0c82d6c33966305b402834c9be": {
+    "src": "начать вслепую",
+    "en": "start blind"
+  },
+  "8444ce38e42616e93c52f4b55f825b9546ffd73f": {
+    "src": "песочница шутер",
+    "en": "sandbox shooter"
+  },
+  "dd8a11f51393e01cad85c06b2b4810ccca9f7789": {
+    "src": "программирование",
+    "en": "programming"
+  },
+  "55c74814022b70e5b749eac09b3e744001b9c1f0": {
+    "src": "производство",
+    "en": "production"
+  },
+  "b85854c7c461121637370074e9bc3fab022555d3": {
+    "src": "разрушаемость",
+    "en": "destructibility"
+  },
+  "302ad161bcf9e2477c2ba6cd45025d59642a875a": {
+    "src": "ретро шутер",
+    "en": "retro shooter"
+  },
+  "dbed3c3ae185632912ca53aa1cd5e921861f30f1": {
+    "src": "рефлекс",
+    "en": "reflex"
+  },
+  "4e3e510e760434ca2236e49354d4397c387f377c": {
+    "src": "симулятор ремонта",
+    "en": "repair simulator"
+  },
+  "a628e38d55ad1eb5a9f3512b242adb2a7925ec06": {
+    "src": "скалолазание",
+    "en": "rock climbing"
+  },
+  "c4fd0d63e89db6b9797b3b2cf0ddd4952cad45c3": {
+    "src": "сложный платформер",
+    "en": "challenging platformer"
+  },
+  "d7630e0d13e8b0f29edeab7195b8e63c88732191": {
+    "src": "собери транспорт",
+    "en": "assemble the transport"
+  },
+  "2643fe6241b7834c1ca00cb84c5207968009ffaa": {
+    "src": "фрики",
+    "en": "freaks"
+  },
+  "6d8e5f331813f5b4b929a40529bc4983be696fe0": {
+    "src": "хоррор шутер",
+    "en": "horror shooter"
+  },
+  "22307874c55dd88c4737a545ae0c4969437d170d": {
+    "src": "язык",
+    "en": "language"
+  },
+  "0e8ff7d0b5affb552ba45edd37b23bfe73936e6d": {
+    "src": "воксели",
+    "en": "voxels"
+  },
+  "8984b2f8493a264016ec162a00136996bb604f6e": {
+    "src": "детектив",
+    "en": "detective"
+  },
+  "e4574a9399c08fde4038443c6a956b2d2547c914": {
+    "src": "драчки",
+    "en": "fights"
+  },
+  "af4849035b9a50ec050684f8c103568aecf8f66e": {
+    "src": "запоминающаяся музыка",
+    "en": "catchy music"
+  },
+  "bd7d831e05a3bb6a19fdfca8f379cbbd22c2fb4a": {
+    "src": "мод Doom",
+    "en": "Doom mod"
+  },
+  "d7f2c7f6baac61e0db04f662295c13d33d7cac68": {
+    "src": "против толпы",
+    "en": "against the crowd"
+  },
+  "522aac65c14d8ad3a906d2cda0fa39c82154df92": {
+    "src": "рагдол",
+    "en": "ragdol"
+  },
+  "db65d9157fa78d6facc9dd6bb9a7697f5444afd0": {
+    "src": "рефлекс сверху",
+    "en": "reflex from above"
+  },
+  "1c25ae46aae12cc584e1e6b7ef6f04e1d9e60461": {
+    "src": "рисование",
+    "en": "drawing"
+  },
+  "e6e87d6d5fbbbc7be0f2ec954a703aeb17a6c01e": {
+    "src": "сон",
+    "en": "dream"
+  },
+  "da6ec1319c9dfc2f0ffee08a13691e17aa8944c6": {
+    "src": "спидран",
+    "en": "speedrun"
+  },
+  "564a286c2030b38d6cd75e41297d04171b149e7f": {
+    "src": "физика в стрелялке",
+    "en": "physics in a shooter"
+  },
+  "e01c3e2920f3a66570f1945fa6cb88193da7edab": {
+    "src": "хоррор сбоку",
+    "en": "side horror"
   }
 }

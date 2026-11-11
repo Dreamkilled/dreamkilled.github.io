@@ -141,6 +141,128 @@ video {
   line-height: 1.5;
 }
 
+.similar-page {
+  max-width: var(--article);
+  margin: 0 auto;
+  padding-bottom: 48px;
+}
+
+.similar-page .page-title,
+.similar-page .page-subtitle {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tag-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 34px;
+}
+
+.tag-jump a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--separator);
+  border-radius: 999px;
+  color: var(--link);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.tag-jump a:hover {
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.tag-jump__count {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.tag-group {
+  margin: 0 0 42px;
+  scroll-margin-top: 80px;
+}
+
+.tag-group__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--separator);
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tag-group__count {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.tag-games {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag-games li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tag-games li:last-child {
+  border-bottom: 0;
+}
+
+.tag-games a {
+  color: var(--text);
+}
+
+.tag-games a:hover {
+  color: var(--link);
+}
+
+.tag-games__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tag-games__also {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.tag-games__also a {
+  color: var(--link);
+  font-weight: 400;
+}
+
+.tag-games__meta {
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: right;
+}
+
+.similar-empty {
+  color: var(--text-subhead);
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -340,6 +462,22 @@ video {
 
 .article__body a:hover {
   text-decoration-color: var(--link);
+}
+
+.game-similar {
+  margin: 0 0 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.game-similar__label {
+  color: var(--text-secondary);
+}
+
+.game-similar a {
+  color: var(--link);
+  font-weight: 500;
 }
 
 .article-intro {
@@ -843,6 +981,24 @@ body.lightbox-open {
   .page-title {
     margin-top: 28px;
     font-size: 26px;
+  }
+
+  .similar-page {
+    padding-bottom: 32px;
+  }
+
+  .tag-group__title {
+    font-size: 20px;
+  }
+
+  .tag-games li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .tag-games__meta {
+    text-align: left;
   }
 
   .article {

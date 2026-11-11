@@ -13,8 +13,10 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import html as htmlmod
+import io
 import json
 import re
 import sys
@@ -54,6 +56,9 @@ ARTICLES = [
 ]
 
 SLUGS = {slug for slug, _ in ARTICLES}
+GAME_SLUGS = SLUGS - {"zapusk-flash", "poisk-indie"}
+GAME_EXCLUSIONS = {"kvesty": {"mouthwashing"}}
+TAGS_PATH = DATA_DIR / "game-tags.tsv"
 UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -250,6 +255,307 @@ def truncate(text: str, limit: int = 180) -> str:
         return text
     cut = text[:limit].rsplit(" ", 1)[0].rstrip(".,;:—- ")
     return cut + "…"
+
+
+TAG_TRANSLIT = {
+    "а": "a",
+    "б": "b",
+    "в": "v",
+    "г": "g",
+    "д": "d",
+    "е": "e",
+    "ё": "e",
+    "ж": "zh",
+    "з": "z",
+    "и": "i",
+    "й": "y",
+    "к": "k",
+    "л": "l",
+    "м": "m",
+    "н": "n",
+    "о": "o",
+    "п": "p",
+    "р": "r",
+    "с": "s",
+    "т": "t",
+    "у": "u",
+    "ф": "f",
+    "х": "h",
+    "ц": "ts",
+    "ч": "ch",
+    "ш": "sh",
+    "щ": "sch",
+    "ъ": "",
+    "ы": "y",
+    "ь": "",
+    "э": "e",
+    "ю": "yu",
+    "я": "ya",
+}
+
+
+def clean_game_title(value: str) -> str:
+    text = normalize_space(strip_tags(value))
+    return normalize_space(re.sub(r"^[\u2022\u2605]\s*", "", text))
+
+
+def game_key(value: str) -> str:
+    text = clean_game_title(value)
+    text = (
+        text.replace("\u2019", "'")
+        .replace("\u2018", "'")
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+    )
+    return text.casefold()
+
+
+def read_text_flexible(path: Path) -> str:
+    raw = path.read_bytes()
+    if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
+        return raw.decode("utf-16")
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return raw.decode("cp1251")
+
+
+def load_game_tags() -> tuple[dict[str, dict], list[str]]:
+    if not TAGS_PATH.exists():
+        raise RuntimeError(
+            f"tags file not found: {TAGS_PATH.relative_to(ROOT)}"
+        )
+    text = read_text_flexible(TAGS_PATH)
+    rows = list(csv.reader(io.StringIO(text), delimiter="\t"))
+    issues: list[str] = []
+    result: dict[str, dict] = {}
+    if rows and rows[0] and rows[0][0].strip().casefold() in (
+        "игра",
+        "game",
+        "title",
+    ):
+        rows = rows[1:]
+    for line_number, row in enumerate(rows, 2):
+        if not row or not row[0].strip():
+            continue
+        if row[0].lstrip().startswith("#"):
+            continue
+        key = game_key(row[0])
+        if not key:
+            continue
+        if key in result:
+            issues.append(
+                f"duplicate game row: {normalize_space(row[0])}"
+            )
+            continue
+        raw_tags = row[1] if len(row) > 1 else ""
+        tags: list[str] = []
+        seen: set[str] = set()
+        for value in re.split(r"[,;]+", raw_tags):
+            label = normalize_space(value)
+            if not label:
+                continue
+            tag_key = label.casefold().replace("ё", "е")
+            if tag_key in seen:
+                continue
+            seen.add(tag_key)
+            tags.append(label)
+        result[key] = {
+            "title": normalize_space(row[0]),
+            "tags": tags,
+        }
+    return result, issues
+
+
+def tag_key(value: str) -> str:
+    return normalize_space(value).casefold().replace("ё", "е")
+
+
+def tag_slug(value: str) -> str:
+    text = tag_key(value)
+    slug = re.sub(
+        r"[^a-z0-9]+",
+        "-",
+        "".join(TAG_TRANSLIT.get(char, char) for char in text),
+    ).strip("-")
+    return slug or "tag"
+
+
+def collect_games(
+    articles: list[dict], cache: dict
+) -> tuple[list[dict], dict[str, dict]]:
+    games: list[dict] = []
+    by_key: dict[str, dict] = {}
+    for article in articles:
+        if article["slug"] not in GAME_SLUGS:
+            continue
+        for block in article["blocks"]:
+            if block["type"] != "h3":
+                continue
+            title_ru = clean_game_title(block["html"])
+            key = game_key(title_ru)
+            if not key or key in by_key:
+                continue
+            title_en = clean_game_title(
+                tr_html(block["html"], cache, "en")
+            )
+            game = {
+                "key": key,
+                "id": block.get("id"),
+                "article_slug": article["slug"],
+                "article_title_ru": article["title_ru"],
+                "article_title_en": article["title_en"],
+                "title_ru": title_ru,
+                "title_en": title_en or title_ru,
+            }
+            by_key[key] = game
+            games.append(game)
+    return games, by_key
+
+
+def ensure_tags_file(
+    games: list[dict],
+) -> tuple[bool, list[str]]:
+    if not TAGS_PATH.exists():
+        seeds = (
+            ("tiny and big", "платформер"),
+            ("cave story encore", "платформер"),
+            ("fez", "головоломка"),
+            ("baba is you", "головоломка"),
+            ("mouthwashing", "хоррор"),
+            ("slay the princess", "хоррор"),
+        )
+        lines = ["Игра\tТеги"]
+        for game in games:
+            tag = ""
+            for needle, value in seeds:
+                if needle in game["key"]:
+                    tag = value
+                    break
+            lines.append(f"{game['title_ru']}\t{tag}")
+        ensure_dir(TAGS_PATH.parent)
+        TAGS_PATH.write_text(
+            "\n".join(lines) + "\n", encoding="utf-16"
+        )
+        return True, []
+
+    existing, _ = load_game_tags()
+    missing = [
+        game for game in games if game["key"] not in existing
+    ]
+    if not missing:
+        return False, []
+
+    lines = read_text_flexible(TAGS_PATH).splitlines()
+    if not lines:
+        lines = ["Игра\tТеги"]
+    for game in missing:
+        lines.append(f"{game['title_ru']}\t")
+    TAGS_PATH.write_text(
+        "\n".join(lines) + "\n", encoding="utf-16"
+    )
+    return False, [game["title_ru"] for game in missing]
+
+
+def load_tag_inputs(
+    articles: list[dict], cache: dict
+) -> tuple[dict[str, dict], list[str]]:
+    games, _ = collect_games(articles, cache)
+    created, added = ensure_tags_file(games)
+    if created:
+        log(
+            "created tag skeleton: "
+            f"{TAGS_PATH.relative_to(ROOT)}"
+        )
+    elif added:
+        log(
+            "added games to tags file: "
+            + ", ".join(added)
+        )
+    return load_game_tags()
+
+
+def tag_labels_from(tags_by_game: dict[str, dict]) -> list[str]:
+    labels: dict[str, str] = {}
+    for entry in tags_by_game.values():
+        for label in entry["tags"]:
+            labels.setdefault(tag_key(label), label)
+    return list(labels.values())
+
+
+def build_tag_data(
+    articles: list[dict],
+    tags_by_game: dict[str, dict],
+    cache: dict,
+) -> dict:
+    games, by_key = collect_games(articles, cache)
+    groups_by_key: dict[str, dict] = {}
+    game_tags: dict[str, list[str]] = {}
+    for game in games:
+        entry = tags_by_game.get(game["key"])
+        labels = entry["tags"] if entry else []
+        game_tags[game["key"]] = labels
+        for label in labels:
+            key = tag_key(label)
+            group = groups_by_key.setdefault(
+                key,
+                {
+                    "key": key,
+                    "label": label,
+                    "slug": "",
+                    "games": [],
+                },
+            )
+            group["games"].append(game)
+
+    groups = list(groups_by_key.values())
+    used_slugs: set[str] = set()
+    for group in sorted(groups, key=lambda item: item["key"]):
+        base = tag_slug(group["label"])
+        slug = base
+        number = 2
+        while slug in used_slugs:
+            slug = f"{base}-{number}"
+            number += 1
+        group["slug"] = slug
+        used_slugs.add(slug)
+
+    groups_by_game: dict[str, list[dict]] = {}
+    for game in games:
+        groups_by_game[game["key"]] = [
+            groups_by_key[tag_key(label)]
+            for label in game_tags.get(game["key"], [])
+        ]
+
+    untagged = [
+        game for game in games if not game_tags.get(game["key"])
+    ]
+    unknown_rows = [
+        entry["title"]
+        for key, entry in tags_by_game.items()
+        if key not in by_key
+    ]
+    return {
+        "games": games,
+        "by_key": by_key,
+        "game_tags": game_tags,
+        "groups": groups,
+        "groups_by_game": groups_by_game,
+        "untagged": untagged,
+        "unknown_rows": unknown_rows,
+    }
+
+
+def localized_tag_label(group: dict, cache: dict, lang: str) -> str:
+    if lang == "en":
+        value = tr_plain(group["label"], cache, lang)
+    else:
+        value = group["label"]
+    return value[:1].upper() + value[1:] if value else value
+
+
+def localized_game_title(game: dict, lang: str) -> str:
+    return game["title_en"] if lang == "en" else game["title_ru"]
 
 
 def guess_ext(url: str, default: str = "jpg") -> str:
@@ -574,6 +880,24 @@ def iter_blocks(container):
                 yield child
 
 
+def remove_game_blocks(
+    blocks: list[dict], slug: str, heading_ids: set[str]
+) -> list[dict]:
+    if not heading_ids:
+        return blocks
+    result: list[dict] = []
+    skipping = False
+    for block in blocks:
+        if block["type"] in ("h2", "h3"):
+            skipping = (
+                block["type"] == "h3"
+                and block.get("id") in heading_ids
+            )
+        if not skipping:
+            result.append(block)
+    return result
+
+
 def parse_article(slug: str, url: str, order: int) -> dict:
     source_html, used_url = fetch_html(url)
     soup = BeautifulSoup(source_html, "html.parser")
@@ -657,6 +981,31 @@ def parse_article(slug: str, url: str, order: int) -> dict:
             html_str = sanitize_inner(el)
             if html_str:
                 blocks.append({"type": "p", "html": html_str})
+
+    blocks = remove_game_blocks(
+        blocks,
+        slug,
+        GAME_EXCLUSIONS.get(slug, set()),
+    )
+
+    local_cover_path = IMG_DIR / slug / "cover.gif"
+    if local_cover_path.exists() and local_cover_path.stat().st_size > 0:
+        local_cover = {
+            "type": "gif",
+            "src": "",
+            "caption": cover.get("caption", "") if cover else "",
+            "caption_text": cover.get("caption_text", "") if cover else "",
+            "key": f"local-cover:{slug}",
+            "local_path": local_cover_path.relative_to(ROOT).as_posix(),
+            "kind": "cover",
+        }
+        for index, block in enumerate(blocks):
+            if block.get("kind") == "cover":
+                blocks[index] = local_cover
+                break
+        else:
+            blocks.insert(0, local_cover)
+        cover = local_cover
 
     generic_excerpt_markers = (
         "Список инди игр",
@@ -924,7 +1273,9 @@ def resolve_media(articles: list[dict], mapping: dict[str, str]):
         cover = article.get("cover")
         if cover:
             if cover["type"] == "gif":
-                cover["path"] = path_for(cover["key"])
+                cover["path"] = cover.get("local_path") or path_for(
+                    cover["key"]
+                )
             elif cover["type"] == "video":
                 cover["path"] = path_for(cover["key"])
                 cover["poster_path"] = path_for(cover["key"] + ":poster")
@@ -933,7 +1284,9 @@ def resolve_media(articles: list[dict], mapping: dict[str, str]):
                 for photo in block["photos"]:
                     photo["path"] = path_for(photo["key"])
             elif block["type"] == "gif":
-                block["path"] = path_for(block["key"])
+                block["path"] = block.get("local_path") or path_for(
+                    block["key"]
+                )
             elif block["type"] == "video":
                 block["path"] = path_for(block["key"])
                 block["poster_path"] = path_for(block["key"] + ":poster")
@@ -1087,10 +1440,15 @@ def collect_translation_sources(articles: list[dict]) -> set[str]:
 
 
 def translate_all(
-    articles: list[dict], skip_translate: bool = False
+    articles: list[dict],
+    skip_translate: bool = False,
+    extra_sources: set[str] | None = None,
 ) -> list[tuple[str, str]]:
     cache = load_cache()
     sources = collect_translation_sources(articles)
+    for source in extra_sources or set():
+        if source and has_cyrillic(source) and source.strip():
+            sources.add(source)
     missing = [
         source
         for source in sources
@@ -1462,6 +1820,8 @@ def render_block(block: dict, article: dict, cache: dict, lang: str) -> str:
     block_type = block["type"]
     if block_type == "p":
         return f"<p>{tr_html(block['html'], cache, lang)}</p>"
+    if block_type == "similar":
+        return block["html"]
     if block_type in ("h2", "h3"):
         heading_id = block.get("id")
         id_attr = f' id="{esc(heading_id)}"' if heading_id else ""
@@ -1499,8 +1859,7 @@ def is_decorative_separator(block: dict) -> bool:
     )
 
 
-def intro_layout(article: dict) -> tuple[int, int] | None:
-    blocks = article.get("blocks", [])
+def intro_layout(blocks: list[dict]) -> tuple[int, int] | None:
     cover_index = next(
         (i for i, block in enumerate(blocks) if block.get("kind") == "cover"),
         None,
@@ -1515,9 +1874,56 @@ def intro_layout(article: dict) -> tuple[int, int] | None:
     return None
 
 
-def render_article_body(article: dict, cache: dict, lang: str) -> str:
-    blocks = article["blocks"]
-    layout = intro_layout(article)
+def similar_tags_html(
+    heading_html: str,
+    tag_data: dict,
+    cache: dict,
+    lang: str,
+) -> str:
+    groups = tag_data.get("groups_by_game", {}).get(
+        game_key(heading_html), []
+    )
+    if not groups:
+        return ""
+    links = ", ".join(
+        f'<a href="/{lang}/similar/#tag-{esc(group["slug"])}">'
+        f"{esc(localized_tag_label(group, cache, lang))}</a>"
+        for group in groups
+    )
+    label = "Similar" if lang == "en" else "Похожие"
+    return (
+        '<p class="game-similar">'
+        f'<span class="game-similar__label">{label}:</span> {links}</p>'
+    )
+
+
+def with_similar_links(
+    blocks: list[dict],
+    article: dict,
+    tag_data: dict,
+    cache: dict,
+    lang: str,
+) -> list[dict]:
+    if article["slug"] not in GAME_SLUGS:
+        return blocks
+    result: list[dict] = []
+    for block in blocks:
+        result.append(block)
+        if block["type"] != "h3":
+            continue
+        html = similar_tags_html(block["html"], tag_data, cache, lang)
+        if html:
+            result.append({"type": "similar", "html": html})
+    return result
+
+
+def render_article_body(
+    article: dict, cache: dict, lang: str, tag_data: dict
+) -> str:
+    blocks = with_similar_links(
+        article["blocks"], article, tag_data, cache, lang
+    )
+    layout = intro_layout(blocks)
     if layout is None:
         return "\n".join(
             render_block(block, article, cache, lang) for block in blocks
@@ -1651,6 +2057,7 @@ def render_article(
     articles: list[dict],
     cache: dict,
     lang: str,
+    tag_data: dict,
 ) -> str:
     index = articles.index(article)
     prev_article = articles[index - 1] if index > 0 else None
@@ -1664,7 +2071,7 @@ def render_article(
         )
     description = truncate(f"{title} {excerpt}", 180)
 
-    body = render_article_body(article, cache, lang)
+    body = render_article_body(article, cache, lang, tag_data)
 
     switch_href = f"/{'en' if lang == 'ru' else 'ru'}/{article['slug']}/"
     source_prefix = "Оригинал на " if lang == "ru" else "Original on "
@@ -1798,6 +2205,145 @@ def render_index(
     )
 
 
+def game_count_label(count: int, lang: str) -> str:
+    if lang == "en":
+        return f"{count} game" if count == 1 else f"{count} games"
+    if count % 10 == 1 and count % 100 != 11:
+        word = "игра"
+    elif 2 <= count % 10 <= 4 and not 12 <= count % 100 <= 14:
+        word = "игры"
+    else:
+        word = "игр"
+    return f"{count} {word}"
+
+
+def game_href(game: dict, lang: str) -> str:
+    href = f"/{lang}/{game['article_slug']}/"
+    if game.get("id"):
+        href += f"#{game['id']}"
+    return href
+
+
+def render_similar_page(tag_data: dict, cache: dict, lang: str) -> str:
+    if lang == "en":
+        title = "Similar games"
+        subtitle = (
+            "Games grouped by tags. Pick a tag to see what else "
+            "you can play."
+        )
+        empty = "No tags yet."
+        nav_label = "Tags"
+        also_label = "Also"
+        page_title = "Similar games — Dreamkilled"
+    else:
+        title = "Похожие игры"
+        subtitle = (
+            "Игры, сгруппированные по тегам. Выбери тег и посмотри, "
+            "во что ещё можно сыграть."
+        )
+        empty = "Пока нет тегов."
+        nav_label = "Теги"
+        also_label = "Ещё"
+        page_title = "Похожие игры — Dreamkilled"
+
+    groups = sorted(
+        tag_data["groups"],
+        key=lambda group: localized_tag_label(
+            group, cache, lang
+        ).casefold(),
+    )
+    jump_links = []
+    sections = []
+    for group in groups:
+        label = localized_tag_label(group, cache, lang)
+        count = len(group["games"])
+        games = sorted(
+            group["games"],
+            key=lambda game: localized_game_title(
+                game, lang
+            ).casefold(),
+        )
+        jump_links.append(
+            f'<a href="#tag-{esc(group["slug"])}">'
+            f"<span>{esc(label)}</span>"
+            f'<span class="tag-jump__count">{count}</span></a>'
+        )
+        items = []
+        for game in games:
+            item_title = localized_game_title(game, lang)
+            article_title = (
+                game["article_title_en"]
+                if lang == "en"
+                else game["article_title_ru"]
+            )
+            other_groups = sorted(
+                (
+                    other
+                    for other in tag_data.get(
+                        "groups_by_game", {}
+                    ).get(game["key"], [])
+                    if other["key"] != group["key"]
+                ),
+                key=lambda other: localized_tag_label(
+                    other, cache, lang
+                ).casefold(),
+            )
+            also = ""
+            if other_groups:
+                other_links = ", ".join(
+                    f'<a href="#tag-{esc(other["slug"])}">'
+                    f"{esc(localized_tag_label(other, cache, lang))}</a>"
+                    for other in other_groups
+                )
+                also = (
+                    '<span class="tag-games__also">'
+                    f"{esc(also_label)}: {other_links}</span>"
+                )
+            items.append(
+                "<li>"
+                '<div class="tag-games__main">'
+                f'<a href="{esc(game_href(game, lang))}">'
+                f"{esc(item_title)}</a>"
+                f"{also}"
+                "</div>"
+                f'<span class="tag-games__meta">{esc(article_title)}</span>'
+                "</li>"
+            )
+        sections.append(
+            f'<section class="tag-group" id="tag-{esc(group["slug"])}">'
+            '<h2 class="tag-group__title">'
+            f"{esc(label)} "
+            f'<span class="tag-group__count">'
+            f"{esc(game_count_label(count, lang))}</span>"
+            "</h2>"
+            f'<ul class="tag-games">{"".join(items)}</ul>'
+            "</section>"
+        )
+
+    if groups:
+        body = (
+            f'<nav class="tag-jump" aria-label="{esc(nav_label)}">'
+            f'{"".join(jump_links)}</nav>'
+            + "".join(sections)
+        )
+    else:
+        body = f'<p class="similar-empty">{esc(empty)}</p>'
+
+    switch_href = "/en/similar/" if lang == "ru" else "/ru/similar/"
+    return (
+        head(lang, page_title, subtitle)
+        + f"<body>\n{topbar(lang, f'/{lang}/', switch_href)}\n"
+        + '<main class="container">\n'
+        + '<div class="similar-page">\n'
+        + f'<h1 class="page-title">{esc(title)}</h1>\n'
+        + f'<p class="page-subtitle">{esc(subtitle)}</p>\n'
+        + body
+        + "\n</div>\n</main>\n"
+        + footer(lang)
+        + "\n</body>\n</html>\n"
+    )
+
+
 def render_root() -> str:
     return (
         "<!DOCTYPE html>\n<html lang=\"ru\">\n<head>\n"
@@ -1845,14 +2391,21 @@ def write_text(path: Path, text: str):
     path.write_text(text, encoding="utf-8")
 
 
-def render_all(articles: list[dict], cache: dict):
+def render_all(articles: list[dict], cache: dict, tag_data: dict):
     for article in articles:
         for lang in ("ru", "en"):
-            page = render_article(article, articles, cache, lang)
+            page = render_article(
+                article, articles, cache, lang, tag_data
+            )
             write_text(ROOT / lang / article["slug"] / "index.html", page)
             log(f"  page {lang}/{article['slug']}/index.html")
     write_text(ROOT / "ru" / "index.html", render_index(articles, cache, "ru"))
     write_text(ROOT / "en" / "index.html", render_index(articles, cache, "en"))
+    for lang in ("ru", "en"):
+        write_text(
+            ROOT / lang / "similar" / "index.html",
+            render_similar_page(tag_data, cache, lang),
+        )
     write_text(ROOT / "index.html", render_root())
     write_text(ROOT / "404.html", render_404())
     write_text(ROOT / ".nojekyll", "")
@@ -1863,51 +2416,69 @@ def render_all(articles: list[dict], cache: dict):
 # ---------------------------------------------------------------------------
 
 
-def verify(articles: list[dict], media_failures, translation_failures):
+def verify(
+    articles: list[dict],
+    media_failures,
+    translation_failures,
+    tag_data: dict,
+):
     log("\nverification")
     page_count = 0
     broken_links: list[str] = []
     missing_src: list[str] = []
     remote_src: list[str] = []
 
+    def check_page(path: Path):
+        nonlocal page_count
+        if not path.exists():
+            broken_links.append(str(path.relative_to(ROOT)))
+            return
+        page_count += 1
+        text = path.read_text(encoding="utf-8")
+        soup = BeautifulSoup(text, "html.parser")
+        for tag in soup.find_all(src=True):
+            src = tag["src"]
+            if src.startswith("http") or src.startswith("//"):
+                remote_src.append(f"{path.name}: {src}")
+                continue
+            if src.startswith("/"):
+                target = ROOT / src.lstrip("/")
+                if not target.exists():
+                    missing_src.append(f"{path.relative_to(ROOT)} -> {src}")
+        for tag in soup.find_all(href=True):
+            href = tag["href"]
+            if href.startswith(("http", "mailto:", "tel:")):
+                continue
+            if href.startswith("#"):
+                fragment = htmlmod.unescape(href[1:])
+                if fragment and f'id="{fragment}"' not in text:
+                    broken_links.append(
+                        f"{path.relative_to(ROOT)} -> {href} "
+                        "(missing anchor)"
+                    )
+                continue
+            if href.startswith("/"):
+                parsed_href = urlparse(href)
+                path_part = parsed_href.path
+                target = ROOT / path_part.lstrip("/")
+                if path_part.endswith("/") or target.is_dir():
+                    target = target / "index.html"
+                if not target.exists():
+                    broken_links.append(
+                        f"{path.relative_to(ROOT)} -> {href}"
+                    )
+                elif parsed_href.fragment:
+                    target_text = target.read_text(encoding="utf-8")
+                    if f'id="{parsed_href.fragment}"' not in target_text:
+                        broken_links.append(
+                            f"{path.relative_to(ROOT)} -> {href} "
+                            "(missing anchor)"
+                        )
+
     for lang in ("ru", "en"):
         for article in articles:
-            path = ROOT / lang / article["slug"] / "index.html"
-            if not path.exists():
-                broken_links.append(str(path.relative_to(ROOT)))
-                continue
-            page_count += 1
-            soup = BeautifulSoup(path.read_text(encoding="utf-8"), "html.parser")
-            for tag in soup.find_all(src=True):
-                src = tag["src"]
-                if src.startswith("http") or src.startswith("//"):
-                    remote_src.append(f"{path.name}: {src}")
-                    continue
-                if src.startswith("/"):
-                    target = ROOT / src.lstrip("/")
-                    if not target.exists():
-                        missing_src.append(f"{path.relative_to(ROOT)} -> {src}")
-            for tag in soup.find_all(href=True):
-                href = tag["href"]
-                if href.startswith(("http", "#", "mailto:", "tel:")):
-                    continue
-                if href.startswith("/"):
-                    parsed_href = urlparse(href)
-                    path_part = parsed_href.path
-                    target = ROOT / path_part.lstrip("/")
-                    if path_part.endswith("/") or target.is_dir():
-                        target = target / "index.html"
-                    if not target.exists():
-                        broken_links.append(
-                            f"{path.relative_to(ROOT)} -> {href}"
-                        )
-                    elif parsed_href.fragment:
-                        target_text = target.read_text(encoding="utf-8")
-                        if f'id="{parsed_href.fragment}"' not in target_text:
-                            broken_links.append(
-                                f"{path.relative_to(ROOT)} -> {href} "
-                                "(missing anchor)"
-                            )
+            check_page(ROOT / lang / article["slug"] / "index.html")
+        check_page(ROOT / lang / "similar" / "index.html")
 
     for path in [
         ROOT / "ru" / "index.html",
@@ -1927,6 +2498,16 @@ def verify(articles: list[dict], media_failures, translation_failures):
         body = soup.select_one(".article__body")
         if body:
             cyrillic_en += len(re.findall(r"[\u0400-\u04FF]", body.get_text(" ")))
+    similar_en = ROOT / "en" / "similar" / "index.html"
+    if similar_en.exists():
+        soup = BeautifulSoup(
+            similar_en.read_text(encoding="utf-8"), "html.parser"
+        )
+        page = soup.select_one(".similar-page")
+        if page:
+            cyrillic_en += len(
+                re.findall(r"[\u0400-\u04FF]", page.get_text(" "))
+            )
 
     image_count = (
         len([path for path in IMG_DIR.rglob("*") if path.is_file()])
@@ -1944,9 +2525,16 @@ def verify(articles: list[dict], media_failures, translation_failures):
     log(f"  missing local media: {len(missing_src)}")
     log(f"  broken local links: {len(broken_links)}")
     log(f"  remote src (should be 0): {len(remote_src)}")
-    log(f"  cyrillic chars in EN bodies: {cyrillic_en}")
+    log(f"  cyrillic chars in EN content: {cyrillic_en}")
     log(f"  media download failures: {len(media_failures)}")
     log(f"  translation failures: {len(translation_failures)}")
+    untagged = tag_data.get("untagged", [])
+    unknown_rows = tag_data.get("unknown_rows", [])
+    tag_issues = tag_data.get("issues", [])
+    log(f"  games with tags: {len(tag_data['games']) - len(untagged)}")
+    log(f"  untagged games: {len(untagged)}")
+    log(f"  unknown tag rows: {len(unknown_rows)}")
+    log(f"  tag file issues: {len(tag_issues)}")
 
     for item in missing_src[:20]:
         log("    missing:", item)
@@ -1958,6 +2546,12 @@ def verify(articles: list[dict], media_failures, translation_failures):
         log("    media fail:", item)
     for item, error in translation_failures[:10]:
         log("    translation fail:", error, repr(item[:80]))
+    for game in untagged[:10]:
+        log("    untagged:", game["title_ru"])
+    for title in unknown_rows[:10]:
+        log("    unknown tag row:", title)
+    for issue in tag_issues[:10]:
+        log("    tag issue:", issue)
 
     report = {
         "pages": page_count,
@@ -1972,6 +2566,11 @@ def verify(articles: list[dict], media_failures, translation_failures):
             {"source": item[:500], "error": error}
             for item, error in translation_failures
         ],
+        "total_games": len(tag_data["games"]),
+        "tagged_games": len(tag_data["games"]) - len(untagged),
+        "untagged_games": [game["title_ru"] for game in untagged],
+        "unknown_tag_rows": unknown_rows,
+        "tag_file_issues": tag_issues,
     }
     ensure_dir(DATA_DIR)
     REPORT_PATH.write_text(
@@ -2036,9 +2635,12 @@ def main():
         articles = parse_all(use_cache_only=True)
         resolve_media(articles, media_tasks(articles)[1])
         cache = load_cache()
-        render_all(articles, cache)
+        tags_by_game, tag_issues = load_tag_inputs(articles, cache)
+        tag_data = build_tag_data(articles, tags_by_game, cache)
+        tag_data["issues"] = tag_issues
+        render_all(articles, cache, tag_data)
         fix_anchor_links()
-        verify(articles, [], [])
+        verify(articles, [], [], tag_data)
         return
 
     articles = parse_all()
@@ -2070,6 +2672,9 @@ def main():
             )
         return
 
+    cache = load_cache()
+    tags_by_game, tag_issues = load_tag_inputs(articles, cache)
+
     if args.skip_media:
         log("skipping media downloads")
         media_failures = []
@@ -2082,11 +2687,22 @@ def main():
         if (ROOT / relative).exists()
     }
     resolve_media(articles, mapping)
-    translation_failures = translate_all(articles, skip_translate=args.skip_translate)
+    translation_failures = translate_all(
+        articles,
+        skip_translate=args.skip_translate,
+        extra_sources=set(tag_labels_from(tags_by_game)),
+    )
     cache = load_cache()
-    render_all(articles, cache)
+    tag_data = build_tag_data(articles, tags_by_game, cache)
+    tag_data["issues"] = tag_issues
+    render_all(articles, cache, tag_data)
     fix_anchor_links()
-    verify(articles, media_failures, translation_failures)
+    verify(
+        articles,
+        media_failures,
+        translation_failures,
+        tag_data,
+    )
 
 
 def parse_all(use_cache_only: bool = False) -> list[dict]:
