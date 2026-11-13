@@ -4830,5 +4830,177 @@
   "e01c3e2920f3a66570f1945fa6cb88193da7edab": {
     "src": "хоррор сбоку",
     "en": "side horror"
+  },
+  "a9cdcd751b63c2e3af67db365e80258230d1c9df": {
+    "src": "высота",
+    "en": "height"
+  },
+  "e3a8db7f4e54c2d66018afdac56874c952c51f60": {
+    "src": "завоевание",
+    "en": "conquest"
+  },
+  "2154d69b2f424cf1e2b8d9290277537d1382c36c": {
+    "src": "паркур",
+    "en": "parkour"
+  },
+  "b57ccb1c23058fdcec2f99bf0e4798354cabea58": {
+    "src": "сборка транспорта",
+    "en": "transport assembly"
+  },
+  "29850619499574db1f86fb7893752bae0d20bf97": {
+    "src": "страх высоты",
+    "en": "fear of heights"
+  },
+  "cf2766da7f3478aae163ef473adfce7c166cad2c": {
+    "src": "страх глубины",
+    "en": "fear of depth"
+  },
+  "15a480617f4bf6c11e16f3e2698179fc9fd56b1a": {
+    "src": "торговля",
+    "en": "trade"
+  },
+  "29c3b9a950b27a102e41a415590d0ad217661ba0": {
+    "src": "хоррор кв",
+    "en": "horror square"
+  },
+  "ac4194b73e51d4ed4dcb6a355a0654f610dd5dd3": {
+    "src": "хоррор квест",
+    "en": "horror quest"
+  },
+  "d30ebc54c977d1b1067ef05974e1406fc02a36f2": {
+    "src": "шахматы",
+    "en": "chess"
+  },
+  "c655622fd328a0d1e6b63dd7cccca7ef6e7ac33b": {
+    "src": "головоломка из глаз",
+    "en": "eye puzzle"
+  },
+  "261c47ae12ca9ce005e6b573d7100d6ae56ab4a3": {
+    "src": "симулятор вселенной",
+    "en": "universe simulator"
+  },
+  "cfea00d2f21293efea181015cdc0684604d504e7": {
+    "src": "строительство",
+    "en": "construction"
+  },
+  "e95643a3b6e7171a82b33f80c33d04b8e4903083": {
+    "src": "хоррор от третьего лица",
+    "en": "third person horror"
+  },
+  "24941b5fce251033b37313f2aad53f3889e58e93": {
+    "src": "Бредовая атмосфера сновидения.",
+    "en": "Delusional dream atmosphere."
+  },
+  "94a19bdd3fc4d1e44ad298bf7d80ef73a8d2a64b": {
+    "src": "В игре учишься пользоваться реальными командами из Линукса",
+    "en": "In the game you learn to use real Linux commands"
+  },
+  "2b490d2007a007c643d228594dc1c4fb36e09851": {
+    "src": "Вид из глаз даёт сильное погружение.",
+    "en": "The view from the eyes gives a strong immersion."
+  },
+  "941004f53fd37a097eff9087de1578bcdb39f2a1": {
+    "src": "Графика строится на кубиках.",
+    "en": "The graphics are built on cubes."
+  },
+  "8057f9343b6d7620d7e587d704d3249f7095434d": {
+    "src": "Ежедневная рутина.",
+    "en": "Daily routine."
+  },
+  "5128bfdd13ae7cc351550477580fd3389de84574": {
+    "src": "Если задумаешься, то погибнешь.",
+    "en": "If you think about it, you will die."
+  },
+  "88dd22a76a95d173d702485e346812c83288b11b": {
+    "src": "Зрелищное противостояние большому числу противников.",
+    "en": "Spectacular confrontation with a large number of opponents."
+  },
+  "f7ae30bd96f21a87d7cf3f6fc3aae8a171c0370d": {
+    "src": "Игроки проходят одну игру, но их персонажи не встречаются.",
+    "en": "Players complete one game, but their characters are not encountered."
+  },
+  "28fd0711f2720a6e77f26e96a86cf99d98cd984d": {
+    "src": "Игры, подобные Portal. Вид из глаз даёт сильное погружение. Часто связаны с испытаниями.",
+    "en": "Games like Portal. The view from the eyes gives a strong immersion. Often associated with trials."
+  },
+  "2ebcfeeeb975473c05964016b1f4a01f6a32e203": {
+    "src": "Клоны Hotline Miami",
+    "en": "Hotline Miami clones"
+  },
+  "1d35760671b625313f5558fb6166aaa1e624e74d": {
+    "src": "Когда страшно смотреть вниз.",
+    "en": "When it's scary to look down."
+  },
+  "07246325ff1f7161e53667e300b692697c9f3130": {
+    "src": "Музыка впечатляет.",
+    "en": "The music is impressive."
+  },
+  "5c4524f9e8949a567ccfb2761670919da30cab4b": {
+    "src": "Намеренно высокая сложность",
+    "en": "Intentionally high difficulty"
+  },
+  "87ca50d64b431d9f7e7449fe07ca482c8cc4043a": {
+    "src": "Не стоит узнавать про игру ничего. Картинки, видео или тексты о игре испортят впечатление. К этому тегу стоит отнестись серьёзно.",
+    "en": "You don't need to know anything about the game. Pictures, videos or texts about the game will spoil the impression. This tag should be taken seriously."
+  },
+  "3efda22d8fea3508260e00b63ed957256198b0f5": {
+    "src": "Невозможно пройти с первой попытки. Прохождение строится на развитии навыков игрока, а не на гринде и покупках.",
+    "en": "Can't pass on the first try. The passage is based on the development of the player’s skills, and not on grinding and shopping."
+  },
+  "91065ba9fb5ede7aee455c65b9d58618143b3d50": {
+    "src": "Очень многое можно разрушить.",
+    "en": "A lot can be destroyed."
+  },
+  "43327a55f8a5ab43a82f10019a8f02bbccc92d91": {
+    "src": "Попытки справится как можно быстрее.",
+    "en": "Attempts to cope as quickly as possible."
+  },
+  "19c853983ce725c991b0825b198f0d0ae3a4c158": {
+    "src": "После смерти персонажи реалистично падают.",
+    "en": "After death, characters fall realistically."
+  },
+  "75f4b49078cee477708ef2649fe67e6c6267e366": {
+    "src": "Противников удаётся хорошо отмутузить.",
+    "en": "The opponents manage to be beaten well."
+  },
+  "150c05c9bb703b6cd18d38cf033baada36e276f5": {
+    "src": "Совместная игра по сети.",
+    "en": "Online co-op play."
+  },
+  "4fb58a60beea63711fccf5473b5c2d98207dfb47": {
+    "src": "Составление инструкций.",
+    "en": "Drawing up instructions."
+  },
+  "2e000e362aee53ff936a30f2b62d91e0e8cc550d": {
+    "src": "Страх перед ямами или толщей воды.",
+    "en": "Fear of holes or thick water."
+  },
+  "0fd9b80007e1b1b9a58040a440e618c00d91ffda": {
+    "src": "Сюжет с богатой и продуманной историей.",
+    "en": "A plot with a rich and thoughtful history."
+  },
+  "bc55ca6bf910af49ce5e6df03268e13fc6ec1944": {
+    "src": "Твоё средство передвижения придётся собрать.",
+    "en": "Your vehicle will have to be assembled."
+  },
+  "9a853541431aaf2c787a590898d47361dcb4f93c": {
+    "src": "Управление несколькими персонажами и строительство базы.",
+    "en": "Manage multiple characters and build a base."
+  },
+  "07e01d4262e4aa25c469be67a1a694a38dceaf70": {
+    "src": "Часто переходит в ограбление.",
+    "en": "Often turns into robbery."
+  },
+  "5af931d571e86c465fb3f31b4035d4aa8ff64890": {
+    "src": "Эстетика Дюка Нюкема и прочего старья.",
+    "en": "Aesthetics of Duke Nukem and other old stuff."
+  },
+  "b84af7d734638162bce92327d55da43917a9e0ec": {
+    "src": "Эстетика бетона. Можно встретить в брутализме, мегаструктурах и во сне.",
+    "en": "Aesthetics of concrete. Can be found in brutalism, megastructures and in dreams."
+  },
+  "8e863eaa5032b69a6c9ba21b6f9fb6b9fc8b3c78": {
+    "src": "Язык в игре можно перевести.",
+    "en": "The language in the game can be translated."
   }
 }

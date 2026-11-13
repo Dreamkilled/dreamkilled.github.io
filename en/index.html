@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<header class="topbar"><div class="topbar__inner"><a class="brand" href="/en/">All articles</a><nav class="lang-switch"><a href="/ru/" hreflang="ru">RU</a></nav></div></header>
+<header class="topbar"><div class="topbar__inner"><a class="brand" href="/en/">All articles</a><div class="site-search" role="search" data-search-lang="en" data-search-index="/search-index.json"><input class="site-search__input" type="search" placeholder="Search game" aria-label="Search by game title" autocomplete="off" autocapitalize="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="site-search-results"><div class="site-search__results" id="site-search-results" role="listbox" hidden></div></div><nav class="lang-switch"><a href="/ru/" hreflang="ru">RU</a></nav></div></header>
 <main class="container">
 <h1 class="page-title">What to Play? 400 Indie Games!</h1>
 <p class="page-subtitle">The collections are grouped by genre. Not strictly, but already more convenient than a giant list.<br>The very best in each collection are marked with ★.</p>
@@ -40,5 +40,6 @@
 </div>
 </main>
 <footer class="footer"><div class="footer__inner"><span>Micro-reviews of indie games.</span><a href="/en/">All articles</a></div></footer>
+<script src="/script.js" defer></script>
 </body>
 </html>

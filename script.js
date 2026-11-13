@@ -282,4 +282,279 @@
 
     update();
   });
+
+  const searchRoot = document.querySelector(".site-search");
+  const searchInput = searchRoot?.querySelector(".site-search__input");
+  const searchResults = searchRoot?.querySelector(
+    ".site-search__results"
+  );
+
+  if (searchRoot && searchInput && searchResults) {
+    const searchLang =
+      searchRoot.dataset.searchLang === "en" ? "en" : "ru";
+    const searchIndexUrl =
+      searchRoot.dataset.searchIndex || "/search-index.json";
+    const emptyLabel =
+      searchLang === "en" ? "No games found" : "Ничего не найдено";
+    const unavailableLabel =
+      searchLang === "en"
+        ? "Search is temporarily unavailable"
+        : "Поиск временно недоступен";
+    const collator = new Intl.Collator(searchLang, {
+      sensitivity: "base",
+      numeric: true,
+    });
+    let searchItems = [];
+    let searchIndexPromise = null;
+    let searchIndexFailed = false;
+    let searchRequestId = 0;
+    let activeIndex = -1;
+    let visibleItems = [];
+
+    function normalizeSearch(value) {
+      return String(value || "")
+        .toLocaleLowerCase(searchLang === "ru" ? "ru-RU" : "en-US")
+        .replace(/ё/g, "е")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function localizedItemTitle(item) {
+      return searchLang === "en"
+        ? item.titleEn || item.titleRu || ""
+        : item.titleRu || item.titleEn || "";
+    }
+
+    function localizedItemArticle(item) {
+      return searchLang === "en"
+        ? item.articleEn || item.articleRu || ""
+        : item.articleRu || item.articleEn || "";
+    }
+
+    function localizedItemHref(item) {
+      return searchLang === "en"
+        ? item.hrefEn || item.hrefRu || ""
+        : item.hrefRu || item.hrefEn || "";
+    }
+
+    function loadSearchIndex() {
+      if (!searchIndexPromise) {
+        searchIndexPromise = fetch(searchIndexUrl)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            searchItems = Array.isArray(data) ? data : [];
+            return searchItems;
+          })
+          .catch(() => {
+            searchIndexFailed = true;
+            searchItems = [];
+            return searchItems;
+          });
+      }
+      return searchIndexPromise;
+    }
+
+    function scoreItem(item, query) {
+      const titleRu = normalizeSearch(item.titleRu);
+      const titleEn = normalizeSearch(item.titleEn);
+      const tokens = query.split(" ").filter(Boolean);
+      const haystack = `${titleRu} ${titleEn}`;
+      if (!tokens.every((token) => haystack.includes(token))) {
+        return -1;
+      }
+
+      const primary = normalizeSearch(localizedItemTitle(item));
+      if (primary === query) return 0;
+      if (primary.startsWith(query)) return 1;
+
+      const words = primary.split(/[^\p{L}\p{N}]+/u);
+      if (words.some((word) => word.startsWith(query))) return 2;
+      return 3;
+    }
+
+    function findMatches(query) {
+      return searchItems
+        .map((item) => ({ item, score: scoreItem(item, query) }))
+        .filter((entry) => entry.score >= 0)
+        .sort(
+          (a, b) =>
+            a.score - b.score ||
+            collator.compare(
+              localizedItemTitle(a.item),
+              localizedItemTitle(b.item)
+            )
+        )
+        .slice(0, 8)
+        .map((entry) => entry.item);
+    }
+
+    function setSearchExpanded(expanded) {
+      searchInput.setAttribute("aria-expanded", String(expanded));
+    }
+
+    function clearActive() {
+      activeIndex = -1;
+      searchInput.removeAttribute("aria-activedescendant");
+      searchResults
+        .querySelectorAll(".site-search__result")
+        .forEach((option) => {
+          option.classList.remove("is-active");
+          option.setAttribute("aria-selected", "false");
+        });
+    }
+
+    function closeSearchResults() {
+      searchResults.hidden = true;
+      searchResults.textContent = "";
+      visibleItems = [];
+      clearActive();
+      setSearchExpanded(false);
+    }
+
+    function showSearchMessage(message) {
+      searchResults.textContent = "";
+      const status = document.createElement("div");
+      status.className = "site-search__empty";
+      status.setAttribute("role", "status");
+      status.textContent = message;
+      searchResults.append(status);
+      searchResults.hidden = false;
+      visibleItems = [];
+      clearActive();
+      setSearchExpanded(true);
+    }
+
+    function renderSearchResults(items) {
+      searchResults.textContent = "";
+      visibleItems = items;
+      clearActive();
+
+      if (!items.length) {
+        showSearchMessage(
+          searchIndexFailed ? unavailableLabel : emptyLabel
+        );
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const link = document.createElement("a");
+        link.className = "site-search__result";
+        link.id = `site-search-option-${index}`;
+        link.href = localizedItemHref(item);
+        link.tabIndex = -1;
+        link.setAttribute("role", "option");
+        link.setAttribute("aria-selected", "false");
+
+        const title = document.createElement("span");
+        title.className = "site-search__title";
+        title.textContent = localizedItemTitle(item);
+
+        const meta = document.createElement("span");
+        meta.className = "site-search__meta";
+        meta.textContent = localizedItemArticle(item);
+
+        link.append(title, meta);
+        searchResults.append(link);
+      });
+
+      searchResults.hidden = false;
+      setSearchExpanded(true);
+    }
+
+    function setActiveResult(index) {
+      const options = Array.from(
+        searchResults.querySelectorAll(".site-search__result")
+      );
+      if (!options.length) return;
+
+      if (index < 0) index = options.length - 1;
+      if (index >= options.length) index = 0;
+      activeIndex = index;
+
+      options.forEach((option, optionIndex) => {
+        const active = optionIndex === activeIndex;
+        option.classList.toggle("is-active", active);
+        option.setAttribute("aria-selected", String(active));
+      });
+
+      const activeOption = options[activeIndex];
+      searchInput.setAttribute(
+        "aria-activedescendant",
+        activeOption.id
+      );
+      activeOption.scrollIntoView({ block: "nearest" });
+    }
+
+    async function runSearch() {
+      const query = normalizeSearch(searchInput.value);
+      if (!query) {
+        closeSearchResults();
+        return;
+      }
+
+      const requestId = ++searchRequestId;
+      await loadSearchIndex();
+      if (requestId !== searchRequestId) return;
+      renderSearchResults(findMatches(query));
+    }
+
+    searchInput.addEventListener("input", () => {
+      runSearch();
+    });
+
+    searchInput.addEventListener("focus", () => {
+      if (normalizeSearch(searchInput.value)) runSearch();
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (searchResults.hidden) {
+          runSearch().then(() => {
+            if (!searchResults.hidden && visibleItems.length) {
+              setActiveResult(0);
+            }
+          });
+          return;
+        }
+        setActiveResult(activeIndex + 1);
+      } else if (event.key === "ArrowUp") {
+        if (searchResults.hidden || !visibleItems.length) return;
+        event.preventDefault();
+        setActiveResult(
+          activeIndex < 0 ? visibleItems.length - 1 : activeIndex - 1
+        );
+      } else if (event.key === "Enter") {
+        if (searchResults.hidden || !visibleItems.length) return;
+        event.preventDefault();
+        const index = activeIndex < 0 ? 0 : activeIndex;
+        const href = localizedItemHref(visibleItems[index]);
+        if (href) window.location.assign(href);
+      } else if (event.key === "Escape") {
+        if (!searchResults.hidden) {
+          event.preventDefault();
+          closeSearchResults();
+        }
+      }
+    });
+
+    searchRoot.addEventListener("focusout", () => {
+      window.setTimeout(() => {
+        if (!searchRoot.contains(document.activeElement)) {
+          closeSearchResults();
+        }
+      }, 0);
+    });
+
+    document.addEventListener("pointerdown", (event) => {
+      if (!searchRoot.contains(event.target)) {
+        closeSearchResults();
+      }
+    });
+  }
 })();
