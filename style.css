@@ -85,6 +85,10 @@ video {
   padding: 0 20px;
 }
 
+.page--reading .topbar__inner {
+  max-width: calc(var(--article) + 40px);
+}
+
 .brand {
   margin-right: auto;
   color: var(--text);
@@ -127,7 +131,7 @@ video {
 .site-search__input {
   width: 100%;
   height: 34px;
-  padding: 0 12px;
+  padding: 0 34px 0 12px;
   border: 1px solid var(--separator);
   border-radius: 7px;
   background: var(--surface);
@@ -143,6 +147,28 @@ video {
 
 .site-search__input::placeholder {
   color: var(--text-secondary);
+}
+
+.site-search__hint {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  z-index: 1;
+  padding: 1px 5px;
+  border: 1px solid var(--separator);
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 0.15s ease;
+}
+
+.site-search:focus-within .site-search__hint {
+  opacity: 0;
 }
 
 .site-search__input:hover {
@@ -228,6 +254,13 @@ video {
   color: var(--text-subhead);
   font-size: 16px;
   line-height: 1.5;
+}
+
+.container > .page-title,
+.container > .page-subtitle {
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .similar-page {
@@ -425,6 +458,13 @@ video {
   font-size: 14px;
 }
 
+.card--similar .card__thumb--empty span {
+  color: var(--link);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .card__body {
   display: flex;
   flex-direction: column;
@@ -543,6 +583,15 @@ video {
   flex: 0 0 auto;
   color: var(--text-secondary);
   white-space: nowrap;
+}
+
+.toc__item--similar {
+  margin-top: 6px;
+  padding-top: 10px;
+}
+
+.toc__item--similar .toc__title {
+  font-weight: 600;
 }
 
 .article__body blockquote {
@@ -946,11 +995,19 @@ body.lightbox-open {
 }
 
 .article-nav--top {
-  margin: 16px auto 34px;
+  margin: 16px auto;
   padding-top: 0;
   padding-bottom: 22px;
   border-top: 0;
   border-bottom: 1px solid var(--border);
+}
+
+.article-nav--top + .article {
+  padding-top: 0;
+}
+
+.article-nav--top + .similar-page .page-title {
+  margin-top: 16px;
 }
 
 .article-nav__link {
@@ -997,6 +1054,16 @@ body.lightbox-open {
   padding: 22px 20px 40px;
   color: var(--text-secondary);
   font-size: 14px;
+}
+
+.page--reading .footer__inner {
+  max-width: calc(var(--article) + 40px);
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .footer__inner a {

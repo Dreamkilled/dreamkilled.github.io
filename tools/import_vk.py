@@ -35,6 +35,32 @@ DATA_DIR = ROOT / "data"
 CACHE_PATH = DATA_DIR / "translations.json"
 REPORT_PATH = DATA_DIR / "import-report.json"
 SEARCH_INDEX_PATH = ROOT / "search-index.json"
+SITEMAP_PATH = ROOT / "sitemap.xml"
+ROBOTS_PATH = ROOT / "robots.txt"
+SITE_URL = "https://dreamkilled.github.io"
+SITE_NAME = "Dreamkilled"
+DEFAULT_OG_IMAGE = "/img/og-default.jpg"
+ASSET_VERSION = hashlib.sha1(
+    (ROOT / "script.js").read_bytes() + (ROOT / "style.css").read_bytes()
+).hexdigest()[:12]
+
+SIMILAR_PART = 18
+SIMILAR_TITLE_RU = "Поиск похожих игр"
+SIMILAR_TITLE_EN = "Find similar games"
+SIMILAR_EXCERPT_RU = (
+    "Поиск по тегам: разрушаемость, страх высоты и другие."
+)
+SIMILAR_EXCERPT_EN = (
+    "Search by tags: destructibility, fear of heights, and more."
+)
+SIMILAR_DESCRIPTION_RU = (
+    "Теги помогут найти похожие игры. Например, можно найти игры "
+    "с высокой разрушаемостью или пугающие огромной высотой."
+)
+SIMILAR_DESCRIPTION_EN = (
+    "Tags help you find similar games. For example, you can find games "
+    "with high destructibility or games that use the fear of heights."
+)
 
 ARTICLES = [
     ("brodilka-sverhu-rt", "https://vk.ru/@dreamkilled-brodilka-sverhu-rt"),
@@ -1942,6 +1968,16 @@ def render_toc_list(block: dict, cache: dict, lang: str) -> str:
             f'<span class="toc__action">{action_html}</span>'
             "</li>"
         )
+    similar_title = SIMILAR_TITLE_RU if lang == "ru" else SIMILAR_TITLE_EN
+    similar_action = "Смотреть" if lang == "ru" else "View"
+    items.append(
+        '<li class="toc__item toc__item--similar">'
+        f'<span class="toc__title">{esc(similar_title)}</span>'
+        '<span class="toc__leader" aria-hidden="true"></span>'
+        '<span class="toc__action">'
+        f'<a href="/{lang}/similar/">{similar_action}</a>'
+        "</span></li>"
+    )
     return f'<ul class="toc">{"".join(items)}</ul>'
 
 
@@ -2151,7 +2187,9 @@ def topbar(lang: str, href: str, switch_href: str) -> str:
         f'aria-label="{esc(search_label)}" '
         'autocomplete="off" autocapitalize="off" spellcheck="false" '
         'role="combobox" aria-autocomplete="list" aria-haspopup="listbox" '
-        'aria-expanded="false" aria-controls="site-search-results">'
+        'aria-expanded="false" aria-controls="site-search-results" '
+        'aria-keyshortcuts="/">'
+        '<span class="site-search__hint" aria-hidden="true">/</span>'
         '<div class="site-search__results" id="site-search-results" '
         'role="listbox" hidden></div>'
         "</div>"
@@ -2161,16 +2199,42 @@ def topbar(lang: str, href: str, switch_href: str) -> str:
     )
 
 
-def footer(lang: str) -> str:
+def footer(lang: str, include_similar: bool = True) -> str:
     if lang == "en":
         text = "Micro-reviews of indie games."
+        articles_label = "All articles"
+        similar_label = SIMILAR_TITLE_EN
     else:
         text = "Микро-обзоры инди-игр."
+        articles_label = "Все статьи"
+        similar_label = SIMILAR_TITLE_RU
+    similar_link = (
+        f'<a href="/{lang}/similar/">{esc(similar_label)}</a>'
+        if include_similar
+        else ""
+    )
     return (
         '<footer class="footer"><div class="footer__inner">'
         f"<span>{esc(text)}</span>"
-        f'<a href="/{lang}/">{ "All articles" if lang == "en" else "Все статьи" }</a>'
-        "</div></footer>"
+        '<nav class="footer__links">'
+        f'<a href="/{lang}/">{esc(articles_label)}</a>'
+        f"{similar_link}"
+        "</nav></div></footer>"
+    )
+
+
+def absolute_url(path: str | None) -> str:
+    if not path:
+        return ""
+    if path.startswith(("http://", "https://")):
+        return path
+    return f"{SITE_URL}/{path.lstrip('/')}"
+
+
+def alternate_language_path(path: str, lang: str) -> str:
+    other = "en" if lang == "ru" else "ru"
+    return re.sub(
+        rf"^/{re.escape(lang)}(?=/|$)", f"/{other}", path, count=1
     )
 
 
@@ -2179,11 +2243,43 @@ def head(
     title: str,
     description: str,
     og_image: str | None = None,
+    path: str | None = None,
+    og_type: str = "website",
+    published_time: str | None = None,
 ) -> str:
-    image_tag = ""
-    if og_image:
-        image_tag = f'<meta property="og:image" content="{esc(og_image)}">'
     locale = "ru_RU" if lang == "ru" else "en_US"
+    alternate_locale = "en_US" if lang == "ru" else "ru_RU"
+    canonical = absolute_url(path)
+    canonical_tag = (
+        f'<link rel="canonical" href="{esc(canonical)}">\n'
+        if canonical
+        else ""
+    )
+    og_url_tag = (
+        f'<meta property="og:url" content="{esc(canonical)}">\n'
+        if canonical
+        else ""
+    )
+    alternate_tags = ""
+    if path and path.startswith(("/ru/", "/en/")):
+        other_path = alternate_language_path(path, lang)
+        ru_path = path if lang == "ru" else other_path
+        en_path = path if lang == "en" else other_path
+        alternate_tags = (
+            f'<link rel="alternate" hreflang="ru" '
+            f'href="{esc(absolute_url(ru_path))}">\n'
+            f'<link rel="alternate" hreflang="en" '
+            f'href="{esc(absolute_url(en_path))}">\n'
+            f'<link rel="alternate" hreflang="x-default" '
+            f'href="{esc(absolute_url(ru_path))}">\n'
+        )
+    image_url = absolute_url(og_image or DEFAULT_OG_IMAGE)
+    article_tags = ""
+    if og_type == "article" and published_time:
+        article_tags = (
+            '<meta property="article:published_time" '
+            f'content="{esc(published_time)}">\n'
+        )
     return (
         "<!DOCTYPE html>\n"
         f'<html lang="{lang}">\n<head>\n'
@@ -2193,12 +2289,24 @@ def head(
         '<meta name="theme-color" content="#141414">\n'
         f"<title>{esc(title)}</title>\n"
         f'<meta name="description" content="{esc(description)}">\n'
+        f"{canonical_tag}"
+        f"{alternate_tags}"
         f'<meta property="og:title" content="{esc(title)}">\n'
         f'<meta property="og:description" content="{esc(description)}">\n'
-        '<meta property="og:type" content="website">\n'
+        f'<meta property="og:type" content="{og_type}">\n'
+        f'<meta property="og:site_name" content="{esc(SITE_NAME)}">\n'
         f'<meta property="og:locale" content="{locale}">\n'
-        f"{image_tag}\n"
-        '<link rel="stylesheet" href="/style.css">\n'
+        f'<meta property="og:locale:alternate" '
+        f'content="{alternate_locale}">\n'
+        f"{og_url_tag}"
+        f'<meta property="og:image" content="{esc(image_url)}">\n'
+        f'<meta property="og:image:alt" content="{esc(title)}">\n'
+        '<meta name="twitter:card" content="summary_large_image">\n'
+        f'<meta name="twitter:title" content="{esc(title)}">\n'
+        f'<meta name="twitter:description" content="{esc(description)}">\n'
+        f'<meta name="twitter:image" content="{esc(image_url)}">\n'
+        f"{article_tags}"
+        f'<link rel="stylesheet" href="/style.css?v={ASSET_VERSION}">\n'
         "</head>\n"
     )
 
@@ -2228,6 +2336,7 @@ def render_article(
     source_prefix = "Оригинал на " if lang == "ru" else "Original on "
     prev_label = "Предыдущая" if lang == "ru" else "Previous"
     next_label = "Следующая" if lang == "ru" else "Next"
+    similar_title = SIMILAR_TITLE_RU if lang == "ru" else SIMILAR_TITLE_EN
 
     nav_parts = []
     if prev_article:
@@ -2254,6 +2363,12 @@ def render_article(
             f'href="/{lang}/{next_article["slug"]}/">'
             f'<span>{next_label}</span>{esc(next_title)}</a>'
         )
+    elif index == len(articles) - 1:
+        nav_parts.append(
+            f'<a class="article-nav__link article-nav__link--next" '
+            f'href="/{lang}/similar/">'
+            f'<span>{next_label}</span>{esc(similar_title)}</a>'
+        )
     else:
         nav_parts.append("<span></span>")
 
@@ -2272,17 +2387,44 @@ def render_article(
     thumb = url_path(article.get("thumb_path"))
     og_image = thumb or None
 
+    body = re.sub(
+        r"<p>(?:(?!</p>).)*?Dreamkilled(?:(?!</p>).)*?2025"
+        r"(?:(?!</p>).)*?</p>\s*$",
+        "",
+        body,
+        flags=re.DOTALL,
+    ).rstrip()
+    if lang == "ru":
+        signature = (
+            '<p class="article__signature">Список составил '
+            "<strong>Dreamkilled</strong> в 2025 году. "
+            f'{source_prefix}<a href="{esc(article["url"])}" '
+            'target="_blank" rel="noopener noreferrer">VK</a>.</p>'
+        )
+    else:
+        signature = (
+            '<p class="article__signature">The list was compiled by '
+            "<strong>Dreamkilled</strong> in 2025. "
+            f'{source_prefix}<a href="{esc(article["url"])}" '
+            'target="_blank" rel="noopener noreferrer">VK</a>.</p>'
+        )
+
     return (
-        head(lang, f"{title} — Dreamkilled", description, og_image)
-        + f"<body>\n{topbar(lang, f'/{lang}/', switch_href)}\n"
+        head(
+            lang,
+            f"{title} — Dreamkilled",
+            description,
+            og_image,
+            path=f"/{lang}/{article['slug']}/",
+            og_type="article",
+            published_time=article.get("date_iso") or None,
+        )
+        + f'<body class="page--reading">\n{topbar(lang, f"/{lang}/", switch_href)}\n'
         + '<main class="container">\n'
         + top_nav
         + '<article class="article">\n'
         + f'<h1 class="article__title">{esc(title)}</h1>\n'
-        + f'\n<div class="article__body">\n{body}\n'
-        + f'<p class="article__source">{source_prefix}'
-        + f'<a href="{esc(article["url"])}" target="_blank" '
-        + 'rel="noopener noreferrer">VK</a></p>\n'
+        + f'\n<div class="article__body">\n{body}\n{signature}\n'
         + "</div>\n"
         + "</article>\n"
         + bottom_nav
@@ -2290,12 +2432,27 @@ def render_article(
         + footer(lang)
         + "\n"
         + lightbox_markup(lang)
-        + '\n<script src="/script.js" defer></script>\n</body>\n</html>\n'
+        + f'\n<script src="/script.js?v={ASSET_VERSION}" defer></script>\n</body>\n</html>\n'
     )
 
 
+def card_title_html(article: dict, lang: str) -> str:
+    title = (
+        article["title_ru"] if lang == "ru" else article["title_en"]
+    ).strip().rstrip(".")
+    if article["slug"] in {
+        "brodilka-sverhu-rt",
+        "brodilka-sverhu-tb",
+        "brodilka-sboku",
+    }:
+        parts = [part.strip() for part in title.split(". ", 1)]
+        if len(parts) == 2:
+            return "<br>".join(esc(part) for part in parts)
+    return esc(title)
+
+
 def render_card(article: dict, cache: dict, lang: str) -> str:
-    title = article["title_ru"] if lang == "ru" else article["title_en"]
+    title_html = card_title_html(article, lang)
     excerpt = article["excerpt_ru"]
     if lang == "en":
         excerpt = article.get("excerpt_en") or tr_plain(
@@ -2322,9 +2479,46 @@ def render_card(article: dict, cache: dict, lang: str) -> str:
         + thumb_html
         + '<div class="card__body">'
         + f'<div class="card__part">{esc(part_label)}</div>'
-        + f'<h2 class="card__title">{esc(title)}</h2>'
+        + f'<h2 class="card__title">{title_html}</h2>'
         + f'<p class="card__excerpt">{esc(excerpt)}</p>'
         + "</div></a>"
+    )
+
+
+def similar_thumb_path() -> str:
+    for ext in ("jpg", "jpeg", "png", "webp", "gif"):
+        path = IMG_DIR / "similar" / f"thumb.{ext}"
+        if path.exists() and path.stat().st_size > 0:
+            return f"/img/similar/thumb.{ext}"
+    return ""
+
+
+def render_similar_card(lang: str) -> str:
+    title = SIMILAR_TITLE_RU if lang == "ru" else SIMILAR_TITLE_EN
+    excerpt = SIMILAR_EXCERPT_RU if lang == "ru" else SIMILAR_EXCERPT_EN
+    part_label = (
+        f"Часть {SIMILAR_PART}" if lang == "ru" else f"Part {SIMILAR_PART}"
+    )
+    thumb = similar_thumb_path()
+    if thumb:
+        thumb_html = (
+            '<div class="card__thumb">'
+            f'<img src="{esc(thumb)}" alt="" loading="lazy" decoding="async">'
+            "</div>"
+        )
+    else:
+        thumb_html = (
+            '<div class="card__thumb card__thumb--empty">'
+            f"<span>{SIMILAR_PART}</span></div>"
+        )
+    return (
+        f'<a class="card card--similar" href="/{lang}/similar/">'
+        + thumb_html
+        + '<div class="card__body">'
+        f'<div class="card__part">{esc(part_label)}</div>'
+        f'<h2 class="card__title">{esc(title)}</h2>'
+        f'<p class="card__excerpt">{esc(excerpt)}</p>'
+        "</div></a>"
     )
 
 
@@ -2341,10 +2535,13 @@ def render_index(
         page_title = f"{title} — Dreamkilled"
     subtitle = " ".join(subtitle_lines)
     subtitle_html = "<br>".join(esc(line) for line in subtitle_lines)
-    cards = "\n".join(render_card(article, cache, lang) for article in articles)
+    cards = "\n".join(
+        [render_card(article, cache, lang) for article in articles]
+        + [render_similar_card(lang)]
+    )
     switch_href = "/en/" if lang == "ru" else "/ru/"
     return (
-        head(lang, page_title, subtitle)
+        head(lang, page_title, subtitle, path=f"/{lang}/")
         + f"<body>\n{topbar(lang, f'/{lang}/', switch_href)}\n"
         + '<main class="container">\n'
         + f'<h1 class="page-title">{esc(title)}</h1>\n'
@@ -2352,7 +2549,7 @@ def render_index(
         + f'<div class="cards">\n{cards}\n</div>\n'
         + "</main>\n"
         + footer(lang)
-        + '\n<script src="/script.js" defer></script>\n</body>\n</html>\n'
+        + f'\n<script src="/script.js?v={ASSET_VERSION}" defer></script>\n</body>\n</html>\n'
     )
 
 
@@ -2375,25 +2572,61 @@ def game_href(game: dict, lang: str) -> str:
     return href
 
 
-def render_similar_page(tag_data: dict, cache: dict, lang: str) -> str:
+def similar_example_html(
+    tag_data: dict, label: str, text: str, lang: str
+) -> str:
+    key = tag_key(label)
+    slug = next(
+        (
+            group["slug"]
+            for group in tag_data["groups"]
+            if group["key"] == key
+        ),
+        "",
+    )
+    if not slug:
+        return esc(text)
+    return f'<a href="#tag-{esc(slug)}">{esc(text)}</a>'
+
+
+def render_similar_page(
+    tag_data: dict, cache: dict, lang: str, articles: list[dict]
+) -> str:
     if lang == "en":
-        title = "Similar games"
-        subtitle = (
-            "Games grouped by tags. Pick a tag to see what else "
-            "you can play."
+        title = SIMILAR_TITLE_EN
+        description = SIMILAR_DESCRIPTION_EN
+        destructibility = similar_example_html(
+            tag_data, "разрушаемость", "destructibility", lang
+        )
+        heights = similar_example_html(
+            tag_data, "страх высоты", "fear of heights", lang
+        )
+        subtitle_html = (
+            "Tags help you find similar games. For example, you can find "
+            f"games with high {destructibility} or games that use the "
+            f"{heights}."
         )
         empty = "No tags yet."
         nav_label = "Tags"
-        page_title = "Similar games — Dreamkilled"
+        page_title = f"{title} — Dreamkilled"
     else:
-        title = "Похожие игры"
-        subtitle = (
-            "Игры, сгруппированные по тегам. Выбери тег и посмотри, "
-            "во что ещё можно сыграть."
+        title = SIMILAR_TITLE_RU
+        description = SIMILAR_DESCRIPTION_RU
+        destructibility = similar_example_html(
+            tag_data, "разрушаемость", "разрушаемостью", lang
+        )
+        heights = similar_example_html(
+            tag_data, "страх высоты", "высотой", lang
+        )
+        subtitle_html = (
+            "Теги помогут найти похожие игры. Например, можно найти игры "
+            f"с высокой {destructibility} или пугающие огромной {heights}."
         )
         empty = "Пока нет тегов."
         nav_label = "Теги"
-        page_title = "Похожие игры — Dreamkilled"
+        page_title = f"{title} — Dreamkilled"
+
+    heading = f"{title}."
 
     groups = sorted(
         tag_data["groups"],
@@ -2406,10 +2639,10 @@ def render_similar_page(tag_data: dict, cache: dict, lang: str) -> str:
     for group in groups:
         label = localized_tag_label(group, cache, lang)
         count = len(group["games"])
-        description = localized_tag_description(group, cache, lang)
+        tag_description = localized_tag_description(group, cache, lang)
         description_html = (
-            f'<p class="tag-group__description">{esc(description)}</p>'
-            if description
+            f'<p class="tag-group__description">{esc(tag_description)}</p>'
+            if tag_description
             else ""
         )
         games = sorted(
@@ -2486,31 +2719,50 @@ def render_similar_page(tag_data: dict, cache: dict, lang: str) -> str:
         body = f'<p class="similar-empty">{esc(empty)}</p>'
 
     switch_href = "/en/similar/" if lang == "ru" else "/ru/similar/"
+    prev_label = "Предыдущая" if lang == "ru" else "Previous"
+    prev_article = articles[-1]
+    prev_title = (
+        prev_article["title_ru"]
+        if lang == "ru"
+        else prev_article["title_en"]
+    )
+    top_nav = (
+        '<nav class="article-nav article-nav--top">'
+        f'<a class="article-nav__link article-nav__link--prev" '
+        f'href="/{lang}/{prev_article["slug"]}/">'
+        f"<span>{prev_label}</span>{esc(prev_title)}</a>"
+        "<span></span>"
+        "</nav>\n"
+    )
     return (
-        head(lang, page_title, subtitle)
-        + f"<body>\n{topbar(lang, f'/{lang}/', switch_href)}\n"
+        head(
+            lang,
+            page_title,
+            description,
+            og_image=similar_thumb_path() or None,
+            path=f"/{lang}/similar/",
+        )
+        + f'<body class="page--reading">\n{topbar(lang, f"/{lang}/", switch_href)}\n'
         + '<main class="container">\n'
+        + top_nav
         + '<div class="similar-page">\n'
-        + f'<h1 class="page-title">{esc(title)}</h1>\n'
-        + f'<p class="page-subtitle">{esc(subtitle)}</p>\n'
+        + f'<h1 class="page-title">{esc(heading)}</h1>\n'
+        + f'<p class="page-subtitle">{subtitle_html}</p>\n'
         + body
         + "\n</div>\n</main>\n"
-        + footer(lang)
-        + '\n<script src="/script.js" defer></script>\n</body>\n</html>\n'
+        + footer(lang, include_similar=False)
+        + f'\n<script src="/script.js?v={ASSET_VERSION}" defer></script>\n</body>\n</html>\n'
     )
 
 
 def render_root() -> str:
+    title = "Во что сыграть? — Dreamkilled"
+    description = (
+        "Рекомендую 400 инди игр! Подборки инди-игр по жанрам."
+    )
     return (
-        "<!DOCTYPE html>\n<html lang=\"ru\">\n<head>\n"
-        '<meta charset="utf-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        '<meta name="color-scheme" content="dark">\n'
-        '<meta name="theme-color" content="#141414">\n'
-        "<title>Во что сыграть? — Dreamkilled</title>\n"
-        '<meta name="description" content="Рекомендую 400 инди игр! Подборки инди-игр по жанрам.">\n'
-        '<link rel="stylesheet" href="/style.css">\n'
-        "</head>\n<body>\n"
+        head("ru", title, description, path="/")
+        + "<body>\n"
         '<main class="landing"><div class="landing__inner">\n'
         '<h1 class="landing__title">Во что сыграть?</h1>\n'
         '<p class="landing__subtitle">Рекомендую 400 инди игр!</p>\n'
@@ -2530,7 +2782,10 @@ def render_404() -> str:
         '<meta name="color-scheme" content="dark">\n'
         '<meta name="theme-color" content="#141414">\n'
         "<title>Страница не найдена — Dreamkilled</title>\n"
-        '<link rel="stylesheet" href="/style.css">\n'
+        '<meta name="description" content="Страница не найдена. '
+        'Возможно, ссылка устарела.">\n'
+        '<meta name="robots" content="noindex, follow">\n'
+        f'<link rel="stylesheet" href="/style.css?v={ASSET_VERSION}">\n'
         "</head>\n<body>\n"
         '<main class="landing"><div class="landing__inner">\n'
         '<p class="landing__eyebrow">404</p>\n'
@@ -2583,6 +2838,34 @@ def write_search_index(tag_data: dict) -> int:
     return len(items)
 
 
+def render_sitemap(articles: list[dict]) -> str:
+    paths = ["/", "/ru/", "/en/", "/ru/similar/", "/en/similar/"]
+    for article in articles:
+        paths.append(f"/ru/{article['slug']}/")
+        paths.append(f"/en/{article['slug']}/")
+    entries = "\n".join(
+        "  <url>"
+        f"<loc>{esc(absolute_url(path))}</loc>"
+        "</url>"
+        for path in dict.fromkeys(paths)
+    )
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{entries}\n"
+        "</urlset>\n"
+    )
+
+
+def render_robots() -> str:
+    return (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        f"Sitemap: {SITE_URL}/sitemap.xml\n"
+    )
+
+
 def render_all(articles: list[dict], cache: dict, tag_data: dict):
     for article in articles:
         for lang in ("ru", "en"):
@@ -2596,11 +2879,13 @@ def render_all(articles: list[dict], cache: dict, tag_data: dict):
     for lang in ("ru", "en"):
         write_text(
             ROOT / lang / "similar" / "index.html",
-            render_similar_page(tag_data, cache, lang),
+            render_similar_page(tag_data, cache, lang, articles),
         )
     write_search_index(tag_data)
     write_text(ROOT / "index.html", render_root())
     write_text(ROOT / "404.html", render_404())
+    write_text(SITEMAP_PATH, render_sitemap(articles))
+    write_text(ROBOTS_PATH, render_robots())
     write_text(ROOT / ".nojekyll", "")
 
 
@@ -2649,8 +2934,9 @@ def verify(
             if src.startswith("http") or src.startswith("//"):
                 remote_src.append(f"{path.name}: {src}")
                 continue
-            if src.startswith("/"):
-                target = ROOT / src.lstrip("/")
+            src_path = urlparse(src).path
+            if src_path.startswith("/"):
+                target = ROOT / src_path.lstrip("/")
                 if not target.exists():
                     missing_src.append(f"{path.relative_to(ROOT)} -> {src}")
         for tag in soup.find_all(href=True):
@@ -2679,8 +2965,11 @@ def verify(
         ROOT / "index.html",
         ROOT / "404.html",
     ]:
-        if path.exists():
-            page_count += 1
+        check_page(path)
+
+    for path in (SITEMAP_PATH, ROBOTS_PATH):
+        if not path.exists():
+            broken_links.append(f"{path.name} (missing)")
 
     search_index_count = 0
     if not SEARCH_INDEX_PATH.exists():

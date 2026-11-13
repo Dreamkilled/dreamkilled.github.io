@@ -543,6 +543,32 @@
       }
     });
 
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+        const slashKey =
+          event.key === "/" ||
+          (!event.shiftKey &&
+            ["Slash", "Backslash", "NumpadDivide"].includes(event.code));
+        if (!slashKey) return;
+        if (document.body.classList.contains("lightbox-open")) return;
+
+        const target = event.target;
+        if (target instanceof HTMLElement) {
+          if (target.isContentEditable) return;
+          if (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) {
+            return;
+          }
+        }
+
+        event.preventDefault();
+        searchInput.focus();
+      },
+      true
+    );
+
     searchRoot.addEventListener("focusout", () => {
       window.setTimeout(() => {
         if (!searchRoot.contains(document.activeElement)) {
